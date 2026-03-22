@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bid-Crusade | Live Auction</title>
+    <meta name="description" content="Bid-Crusade - Live Auction Simulation for Headstart, IIT Dharwad">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=5">
+</head>
+
+<body>
+    <!-- Custom Cursor -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+    <!-- Particle Background -->
+    <canvas id="bg-canvas"></canvas>
+    <!-- Header -->
+    <header id="app-header">
+        <div class="header-left">
+            <h1 class="logo">BID<span class="logo-accent">-CRUSADE</span></h1>
+            <span class="event-tag">HEADSTART · IIT DHARWAD</span>
+        </div>
+        <nav class="header-nav">
+            <button class="nav-btn active" data-view="auction" id="nav-auction">
+                <span class="nav-icon">⚡</span> Auction
+            </button>
+            <button class="nav-btn" data-view="assets" id="nav-assets">
+                <span class="nav-icon">📦</span> Assets
+            </button>
+            <button class="nav-btn" data-view="teams" id="nav-teams">
+                <span class="nav-icon">🏢</span> Teams
+            </button>
+            <button class="nav-btn" data-view="wheel" id="nav-wheel">
+                <span class="nav-icon">🎡</span> Wheel
+            </button>
+            <button class="nav-btn" data-view="results" id="nav-results">
+                <span class="nav-icon">🏆</span> Results
+            </button>
+        </nav>
+        <div class="header-right">
+            <div class="header-stat">
+                <span class="stat-label">Assets Sold</span>
+                <span class="stat-value" id="header-sold-count">0/40</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ======================== AUCTION VIEW ======================== -->
+    <section id="view-auction" class="view active">
+        <!-- Asset Selector Panel (Left side) -->
+        <div class="auction-layout">
+            <aside class="auction-sidebar" id="auction-asset-list">
+                <h3 class="sidebar-title">Select Asset to Auction</h3>
+                <div class="asset-filter-bar">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="available">Available</button>
+                    <button class="filter-btn" data-filter="sold">Sold</button>
+                </div>
+                <div class="asset-list-scroll" id="asset-list-container">
+                    <!-- Populated by JS -->
+                </div>
+            </aside>
+
+            <!-- Main Auction Stage -->
+            <main class="auction-stage">
+                <!-- No asset selected state -->
+                <div class="auction-empty" id="auction-empty-state">
+                    <div class="empty-icon">🏛️</div>
+                    <h2>Select an asset to begin auction</h2>
+                    <p>Choose from the panel on the left to start bidding</p>
+                </div>
+
+                <!-- Active bidding state -->
+                <div class="auction-active" id="auction-active-state" style="display:none;">
+                    <button class="btn-cancel-auction-top" id="btn-cancel-auction-top"
+                        style="position: absolute; right: 0.8rem; top: 0.8rem; width: 32px; height: 32px; border-radius: 50%; background: transparent; color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; padding: 0;"
+                        onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.color='white'"
+                        onmouseout="this.style.background='transparent'; this.style.color='var(--text-muted)'"
+                        title="Close Asset">✕</button>
+                    <div class="auction-asset-card" style="position: relative; margin-top: 1rem;">
+                        <div class="asset-badge" id="auction-asset-category">A</div>
+                        <div class="asset-id-tag" id="auction-asset-id">Asset #1</div>
+                        <h2 class="auction-asset-name" id="auction-asset-name">Metropolitan Commercial Tower</h2>
+                        <div class="price-section">
+                            <div class="base-price">
+                                <span class="price-label">Base Price</span>
+                                <span class="price-val" id="auction-base-price">₹19 Cr</span>
+                            </div>
+                            <div class="current-price">
+                                <span class="price-label">Current Bid</span>
+                                <span class="price-val price-animated" id="auction-current-price">₹19 Cr</span>
+                            </div>
+                            <div class="min-increment">
+                                <span class="price-label">Min Increment</span>
+                                <span class="price-val" id="auction-min-increment">₹2 Cr</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bidding Controls -->
+                    <div class="bidding-controls">
+                        <div class="bid-adjust">
+                            <label>Bid Amount (₹ Cr)</label>
+                            <div class="bid-input-group">
+                                <button class="bid-btn-small" id="bid-decrease">−</button>
+                                <input type="number" id="bid-amount-input" value="0" min="0" step="1">
+                                <button class="bid-btn-small" id="bid-increase">+</button>
+                            </div>
+                        </div>
+                        <button class="btn-place-bid" id="btn-place-bid">
+                            PLACE BID — ₹<span id="bid-total-display">0</span> Cr
+                        </button>
+                    </div>
+
+                    <!-- Team Selector for Bidding -->
+                    <div class="team-bid-grid" id="team-bid-grid">
+                        <!-- 8 team buttons populated by JS -->
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="auction-actions">
+                        <button class="btn-sell" id="btn-sell" disabled>
+                            🔨 SELL TO SELECTED TEAM
+                        </button>
+                        <button class="btn-skip" id="btn-unsold">
+                            ✕ Mark Unsold
+                        </button>
+                        <button class="btn-cancel-auction" id="btn-cancel-auction">
+                            ← Back
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sold Overlay -->
+                <div class="sold-overlay" id="sold-overlay" style="display:none;">
+                    <div class="sold-content">
+                        <div class="sold-hammer">🔨</div>
+                        <h1>SOLD!</h1>
+                        <p class="sold-asset-name" id="sold-asset-name"></p>
+                        <p class="sold-to">to</p>
+                        <h2 class="sold-team-name" id="sold-team-name"></h2>
+                        <p class="sold-price" id="sold-price"></p>
+                        <button class="btn-continue" id="btn-sold-continue">Continue →</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <section id="view-wheel" class="view">
+        <div class="view-container"
+            style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 0.5rem; height: 100%; overflow: hidden;">
+            <div class="view-header" style="text-align: center; margin-bottom: 1.2rem; display: block; width: 100%;">
+                <h2 style="font-size: 2.6rem; text-shadow: 0 0 15px var(--accent-gold); margin-bottom: 0.4rem;">Disaster
+                    Roulette</h2>
+                <p style="color: var(--text-muted); font-size: 1.1rem;">Spin the wheel to determine the fate of the
+                    investments.</p>
+            </div>
+
+            <div class="wheel-container">
+                <div class="wheel-pointer">▼</div>
+                <div class="wheel" id="disaster-wheel">
+                    <div class="wheel-segment segment-w" style="--i: 0;"><span>W</span></div>
+                    <div class="wheel-segment segment-x" style="--i: 1;"><span>X</span></div>
+                    <div class="wheel-segment segment-y" style="--i: 2;"><span>Y</span></div>
+                    <div class="wheel-segment segment-z" style="--i: 3;"><span>Z</span></div>
+                </div>
+            </div>
+
+            <div class="wheel-controls" style="margin-top: 1.5rem; text-align: center;">
+                <button class="btn-sell" id="btn-spin-wheel"
+                    style="font-size: 1.4rem; padding: 0.8rem 2.8rem; border-radius: 50px; box-shadow: 0 0 20px rgba(255,183,3,0.3);">
+                    SPIN THE WHEEL
+                </button>
+                <div id="wheel-result-display"
+                    style="margin-top: 1.2rem; font-size: 1.9rem; font-weight: 700; height: 2.5rem; color: var(--accent-rose); text-shadow: 0 0 10px rgba(255,100,100,0.5); opacity: 0; transition: opacity 0.5s;">
+                    <!-- Result goes here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== ASSETS VIEW ======================== -->
+    <section id="view-assets" class="view">
+        <div class="view-container">
+            <div class="view-header">
+                <h2>Asset Catalog</h2>
+                <div class="view-header-controls">
+                    <button id="btn-global-toggle-verticals" class="btn-cancel-auction-top"
+                        style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); padding: 0.4rem 0.6rem; border-radius: 4px; font-size: 1rem; margin-right: 1rem; cursor: pointer; transition: all 0.2s;"
+                        onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.color='white'"
+                        onmouseout="this.style.background='transparent'; this.style.color='var(--text-muted)'"
+                        title="Hide Verticals">👁️</button>
+                    <select id="asset-vertical-filter" class="select-filter">
+                        <option value="all">All Verticals</option>
+                        <option value="V1">V1 — Core Value Creation</option>
+                        <option value="V2">V2 — Enablers & Technology</option>
+                        <option value="V3">V3 — Market Access & Distribution</option>
+                        <option value="V4">V4 — Stability & Strategic</option>
+                    </select>
+                    <select id="asset-status-filter" class="select-filter">
+                        <option value="all">All Status</option>
+                        <option value="available">Available</option>
+                        <option value="sold">Sold</option>
+                    </select>
+                </div>
+            </div>
+            <div class="assets-grid" id="assets-grid-view">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== TEAMS VIEW ======================== -->
+    <section id="view-teams" class="view">
+        <div class="view-container">
+            <div class="view-header">
+                <h2>Team Portfolios</h2>
+                <div class="view-header-controls">
+                    <button id="btn-global-toggle-assets" class="btn-sell"
+                        style="padding: 0.6rem 1.2rem; font-size: 0.9rem; margin-right: 1rem;">▼ Show All
+                        Assets</button>
+                </div>
+                <div class="team-name-editor" id="team-name-editor" style="display:none;">
+                    <input type="text" id="team-name-input" placeholder="Enter team name">
+                    <button id="team-name-save" class="btn-small">Save</button>
+                    <button id="team-name-cancel" class="btn-small btn-secondary">Cancel</button>
+                </div>
+            </div>
+            <div class="teams-grid" id="teams-grid-view">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== RESULTS VIEW ======================== -->
+    <section id="view-results" class="view">
+        <div class="view-container">
+            <div class="view-header">
+                <h2>Results & Data Export</h2>
+            </div>
+
+            <!-- Disaster Section -->
+            <div class="results-section">
+                <h3>Disaster Declaration</h3>
+                <div class="disaster-panel" id="disaster-panel">
+                    <div class="disaster-buttons">
+                        <button class="disaster-btn" data-code="W">W</button>
+                        <button class="disaster-btn" data-code="X">X</button>
+                        <button class="disaster-btn" data-code="Y">Y</button>
+                        <button class="disaster-btn" data-code="Z">Z</button>
+                    </div>
+                    <div class="disaster-info" id="disaster-info">
+                        <p>Select a disaster code to apply post-auction impact</p>
+                    </div>
+                    <button class="btn-apply-disaster" id="btn-apply-disaster" disabled>
+                        ⚠️ Apply Disaster
+                    </button>
+                    <button class="btn-reset-disaster" id="btn-reset-disaster" style="display:none;">
+                        ↺ Reset Disaster
+                    </button>
+                </div>
+            </div>
+
+            <!-- Post-Disaster Results -->
+            <div class="results-section" id="post-disaster-section" style="display:block;">
+                <div
+                    style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 1rem; gap: 0.5rem;">
+                    <h3 style="margin-bottom: 0;">Post-Disaster Portfolio Values</h3>
+                    <button id="btn-global-toggle-portfolios" class="btn-cancel-auction-top"
+                        style="background: transparent; border: none; color: var(--text-muted); padding: 0.2rem 0.4rem; font-size: 1rem; cursor: pointer; transition: all 0.2s;"
+                        onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--text-muted)'"
+                        title="Show Portfolios">▶ Show</button>
+                </div>
+                <div id="post-disaster-results-body" style="display:none;">
+                    <div class="results-table-container" id="results-table-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Section -->
+            <div class="results-section">
+                <h3>Data Export</h3>
+                <div class="export-buttons">
+                    <button class="btn-export" id="btn-export-master">
+                        📊 Download Master Sheet (CSV)
+                    </button>
+                    <button class="btn-export" id="btn-export-team-pdfs">
+                        📄 Download Team Summary PDFs
+                    </button>
+                </div>
+            </div>
+
+            <!-- Full Sales Log -->
+            <div class="results-section">
+                <h3>Complete Sales Log</h3>
+                <div class="sales-log-table" id="sales-log-table">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="results-section"
+                style="border-top: 1px solid rgba(255, 75, 123, 0.3); padding-top: 2rem; margin-top: 2rem;">
+                <h3 style="color: var(--accent-rose); text-shadow: var(--neon-rose);">Danger Zone</h3>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">This will permanently
+                    delete all teams, budgets, and sales history. Use only to reset the system for a new event.</p>
+                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <button class="btn-danger" id="btn-reset-all">⚠️ Factory Reset System</button>
+                    <button class="btn-secondary btn-small" id="btn-restore-backup"
+                        style="display:none; padding: 0.6rem 1rem;">↩️ Restore Last Backup</button>
+                    <span id="backup-info-text"
+                        style="color: var(--accent-emerald); font-size: 0.75rem; display:none;"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Custom Dialog Overlay (Bypasses Native Confirm/Prompt Issues) -->
+    <div id="custom-dialog-overlay" class="dialog-overlay" style="display:none;">
+        <div class="dialog-box">
+            <h3 id="dialog-title">Confirm</h3>
+            <p id="dialog-message">Are you sure?</p>
+            <input type="text" id="dialog-input" style="display:none;" autocomplete="off" />
+            <div class="dialog-actions">
+                <button class="btn-cancel-auction" id="dialog-btn-cancel">Cancel</button>
+                <button class="btn-danger" id="dialog-btn-confirm" style="padding: 0.5rem 1rem;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Sale Modal -->
+    <div id="edit-sale-overlay" class="dialog-overlay" style="display:none;">
+        <div class="dialog-box" style="max-width: 420px;">
+            <h3 id="edit-sale-title" style="margin-bottom: 1rem;">✏️ Edit Sale</h3>
+            <div style="margin-bottom: 1rem;">
+                <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.3rem;">Assign to Team</label>
+                <select id="edit-sale-team" style="width: 100%; padding: 0.6rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-size: 1rem;"></select>
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.3rem;">Sale Price (₹ Cr)</label>
+                <input type="number" id="edit-sale-price" min="1" step="1" style="width: 100%; padding: 0.6rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-size: 1rem; text-align: center;" />
+            </div>
+            <div class="dialog-actions">
+                <button class="btn-cancel-auction" id="edit-sale-cancel">Cancel</button>
+                <button class="btn-sell" id="edit-sale-confirm" style="padding: 0.5rem 1.5rem;">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="effects.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
