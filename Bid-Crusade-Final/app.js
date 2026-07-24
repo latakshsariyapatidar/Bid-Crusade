@@ -1,109 +1,242 @@
 // ============================================
-// BID CRUSADES — Live Auction Application
+// BID A BIZ GRAND FINALE — PARTICIPANT-FIRST & DYNAMIC ADMIN ENGINE
+// Continuous Scroll & Mouse Wheel Zoomable PDF Engine
 // ============================================
 
 (function () {
     'use strict';
 
     // ===========================
-    // ASSET DATABASE
-    // (ID, Name, Visible Category, Hidden Vertical, Base Price)
-    // Matching score.py exactly
+    // DEFAULT INITIAL DATASETS (FALLBACKS)
     // ===========================
-    const ASSETS = [
+    function getDefaultAssets() {
+        return [
+            { id: 1, name: "Pan-India Distribution Rights", category: "A", vertical: "V3", basePrice: 11, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 2, name: "Multi-Specialty Hospital Unit", category: "A", vertical: "V1", basePrice: 21, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 3, name: "Multi-Sector ESG Certification Portfolio", category: "A", vertical: "V4", basePrice: 6, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 4, name: "Automated Robotics Assembly System", category: "A", vertical: "V2", basePrice: 14, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 5, name: "Regional Telecom Spectrum Allocation", category: "A", vertical: "V3", basePrice: 18, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 6, name: "Industrial Manufacturing Plant", category: "A", vertical: "V1", basePrice: 21, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 7, name: "Urban Smart Monitoring Network", category: "A", vertical: "V2", basePrice: 9, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 8, name: "Government Infrastructure Contract", category: "A", vertical: "V4", basePrice: 16, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 9, name: "Infrastructure Maintenance Rights", category: "A", vertical: "V4", basePrice: 7, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 10, name: "Mining & Raw Material Extraction Lease", category: "A", vertical: "V1", basePrice: 22, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 11, name: "National Logistics Fleet & Warehousing", category: "B", vertical: "V3", basePrice: 15, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 12, name: "Advanced Cybersecurity Suite", category: "B", vertical: "V2", basePrice: 10, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 13, name: "Tier-2 City Zoned Land Bank", category: "B", vertical: "V4", basePrice: 15, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 14, name: "Multi-Brand Automobile Assembly Unit", category: "B", vertical: "V1", basePrice: 20, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 15, name: "Export-Import Multi-Nation License", category: "B", vertical: "V3", basePrice: 12, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 16, name: "AI & Data Analytics Infrastructure", category: "B", vertical: "V2", basePrice: 12, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 17, name: "Private Power Backup Microgrid", category: "B", vertical: "V4", basePrice: 9, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 18, name: "Cross-Platform Mobile App Ecosystem", category: "B", vertical: "V2", basePrice: 8, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 19, name: "Cold Chain Pharma Distribution", category: "B", vertical: "V3", basePrice: 13, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 20, name: "Cloud Server Farm Facility", category: "B", vertical: "V1", basePrice: 18, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 21, name: "Regulatory Compliance Shield", category: "C", vertical: "V4", basePrice: 8, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 22, name: "Cross-Industry Patent Portfolio", category: "C", vertical: "V2", basePrice: 9, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 23, name: "Multi-State Retail Franchise Rights", category: "C", vertical: "V3", basePrice: 13, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 24, name: "Metropolitan Commercial Tower", category: "C", vertical: "V1", basePrice: 19, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 25, name: "Strategic Smart City Land Reserve", category: "C", vertical: "V4", basePrice: 13, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 26, name: "R&D Innovation Hub", category: "C", vertical: "V2", basePrice: 11, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 27, name: "Commercial Banking & NBFC License", category: "C", vertical: "V3", basePrice: 14, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 28, name: "Pharmaceutical Manufacturing Facility", category: "C", vertical: "V1", basePrice: 19, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 29, name: "Cold Storage Network", category: "C", vertical: "V3", basePrice: 12, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 30, name: "High-Speed Data Cable Network", category: "C", vertical: "V2", basePrice: 11, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 31, name: "Long-Term Raw Material Supply Contract", category: "D", vertical: "V4", basePrice: 10, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 32, name: "Agricultural Processing Facility", category: "D", vertical: "V1", basePrice: 15, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 33, name: "Scalable E-Commerce Platform", category: "D", vertical: "V3", basePrice: 13, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 34, name: "Data Center Cooling System", category: "D", vertical: "V2", basePrice: 8, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 35, name: "Commodity Trading Desk License", category: "D", vertical: "V4", basePrice: 11, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 36, name: "Green Hydrogen Pilot Plant", category: "D", vertical: "V1", basePrice: 19, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 37, name: "National Warehouse Network", category: "D", vertical: "V3", basePrice: 15, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 38, name: "Renewable Energy Solar Grid", category: "D", vertical: "V1", basePrice: 20, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 39, name: "Strategic Insurance & Risk Hedging", category: "D", vertical: "V4", basePrice: 7, ownerTeamId: null, purchasePrice: null, status: 'Available' },
+            { id: 40, name: "Enterprise ERP & Automation System", category: "D", vertical: "V2", basePrice: 10, ownerTeamId: null, purchasePrice: null, status: 'Available' }
+        ];
+    }
 
-        { id: 1, originalId: 23, name: "Pan-India Distribution Rights", fullName: "Pan-India Distribution Rights (Multi-Category)", category: "A", vertical: "V3", basePrice: 11 },
-        { id: 2, originalId: 5, name: "Multi-Specialty Hospital Infrastructure Unit", fullName: "Multi-Specialty Hospital Infrastructure Unit", category: "A", vertical: "V1", basePrice: 21 },
-        { id: 3, originalId: 38, name: "Multi-Sector ESG Certification Portfolio", fullName: "Multi-Sector ESG Certification Portfolio", category: "A", vertical: "V4", basePrice: 6 },
-        { id: 4, originalId: 12, name: "Automated Robotics Assembly System", fullName: "Automated Robotics Assembly System", category: "A", vertical: "V2", basePrice: 14 },
-        { id: 5, originalId: 29, name: "Regional Telecom Spectrum Allocation", fullName: "Regional Telecom Spectrum Allocation", category: "A", vertical: "V3", basePrice: 18 },
-        { id: 6, originalId: 2, name: "Industrial Manufacturing Plant", fullName: "Industrial Manufacturing Plant (Ready-to-Operate)", category: "A", vertical: "V1", basePrice: 21 },
-        { id: 7, originalId: 17, name: "Urban Smart Monitoring Network", fullName: "Urban Smart Monitoring Network", category: "A", vertical: "V2", basePrice: 9 },
-        { id: 8, originalId: 34, name: "Government Infrastructure Contract", fullName: "Government Infrastructure Contract (5-Year Assured)", category: "A", vertical: "V4", basePrice: 16 },
-        { id: 9, originalId: 40, name: "Infrastructure Maintenance & AMC Rights", fullName: "Infrastructure Maintenance & AMC Rights", category: "A", vertical: "V4", basePrice: 7 },
-        { id: 10, originalId: 9, name: "Mining & Raw Material Extraction Lease", fullName: "Mining & Raw Material Extraction Lease", category: "A", vertical: "V1", basePrice: 22 },
-        { id: 11, originalId: 21, name: "National Logistics Fleet & Warehousing Rights", fullName: "National Logistics Fleet & Warehousing Rights", category: "B", vertical: "V3", basePrice: 15 },
-        { id: 12, originalId: 15, name: "Advanced Cybersecurity Infrastructure Suite", fullName: "Advanced Cybersecurity Infrastructure Suite", category: "B", vertical: "V2", basePrice: 10 },
-        { id: 13, originalId: 31, name: "Tier-2 City Land Bank", fullName: "Tier-2 City Land Bank (50 Acres, Zoned)", category: "B", vertical: "V4", basePrice: 15 },
-        { id: 14, originalId: 7, name: "Multi-Brand Automobile Assembly Unit", fullName: "Multi-Brand Automobile Assembly Unit", category: "B", vertical: "V1", basePrice: 20 },
-        { id: 15, originalId: 26, name: "Export-Import Multi-Nation Trade License", fullName: "Export-Import Multi-Nation Trade License", category: "B", vertical: "V3", basePrice: 12 },
-        { id: 16, originalId: 11, name: "AI & Data Analytics Infrastructure Suite", fullName: "AI & Data Analytics Infrastructure Suite", category: "B", vertical: "V2", basePrice: 12 },
-        { id: 17, originalId: 33, name: "Private Power Backup & Microgrid System", fullName: "Private Power Backup & Microgrid System", category: "B", vertical: "V4", basePrice: 9 },
-        { id: 18, originalId: 19, name: "Cross-Platform Mobile Application Ecosystem", fullName: "Cross-Platform Mobile Application Ecosystem", category: "B", vertical: "V2", basePrice: 8 },
-        { id: 19, originalId: 28, name: "Cold Chain Pharmaceutical Distribution Network", fullName: "Cold Chain Pharmaceutical Distribution Network", category: "B", vertical: "V3", basePrice: 13 },
-        { id: 20, originalId: 4, name: "Cloud Server Farm Facility", fullName: "Cloud Server Farm Facility", category: "B", vertical: "V1", basePrice: 18 },
-        { id: 21, originalId: 37, name: "Regulatory Compliance & Legal Shield Framework", fullName: "Regulatory Compliance & Legal Shield Framework", category: "C", vertical: "V4", basePrice: 8 },
-        { id: 22, originalId: 14, name: "Cross-Industry Patent Portfolio", fullName: "Cross-Industry Patent Portfolio", category: "C", vertical: "V2", basePrice: 9 },
-        { id: 23, originalId: 25, name: "Multi-State Retail Franchise Rights", fullName: "Multi-State Retail Franchise Rights", category: "C", vertical: "V3", basePrice: 13 },
-        { id: 24, originalId: 1, name: "Metropolitan Commercial Tower", fullName: "Metropolitan Commercial Tower (Tier-1 City)", category: "C", vertical: "V1", basePrice: 19 },
-        { id: 25, originalId: 36, name: "Strategic Land Reserve in Emerging Smart City Zone", fullName: "Strategic Land Reserve in Emerging Smart City Zone", category: "C", vertical: "V4", basePrice: 13 },
-        { id: 26, originalId: 18, name: "Research & Development Innovation Hub", fullName: "Research & Development Innovation Hub", category: "C", vertical: "V2", basePrice: 11 },
-        { id: 27, originalId: 30, name: "Commercial Banking Infrastructure & NBFC License", fullName: "Commercial Banking Infrastructure & NBFC License", category: "C", vertical: "V3", basePrice: 14 },
-        { id: 28, originalId: 8, name: "Pharmaceutical Manufacturing Facility", fullName: "Pharmaceutical Manufacturing Facility", category: "C", vertical: "V1", basePrice: 19 },
-        { id: 29, originalId: 24, name: "Cold Storage & Warehousing Network", fullName: "Cold Storage & Warehousing Network", category: "C", vertical: "V3", basePrice: 12 },
-        { id: 30, originalId: 13, name: "High-Speed Data Cable Network", fullName: "High-Speed Data Cable Network", category: "C", vertical: "V2", basePrice: 11 },
-        { id: 31, originalId: 39, name: "Long-Term Raw Material Supply Contract", fullName: "Long-Term Raw Material Supply Contract", category: "D", vertical: "V4", basePrice: 10 },
-        { id: 32, originalId: 6, name: "Agricultural Processing Facility", fullName: "Agricultural Processing Facility (Certified)", category: "D", vertical: "V1", basePrice: 15 },
-        { id: 33, originalId: 22, name: "Scalable E-Commerce Marketplace Platform", fullName: "Scalable E-Commerce Marketplace Platform", category: "D", vertical: "V3", basePrice: 13 },
-        { id: 34, originalId: 16, name: "Data Center Cooling & Infrastructure System", fullName: "Data Center Cooling & Infrastructure System", category: "D", vertical: "V2", basePrice: 8 },
-        { id: 35, originalId: 35, name: "Diversified Commodity Trading Desk", fullName: "Diversified Commodity Trading Desk (Licensed)", category: "D", vertical: "V4", basePrice: 11 },
-        { id: 36, originalId: 10, name: "Green Hydrogen Pilot Plant", fullName: "Green Hydrogen Pilot Plant", category: "D", vertical: "V1", basePrice: 19 },
-        { id: 37, originalId: 27, name: "National Warehouse & Fulfillment Network", fullName: "National Warehouse & Fulfillment Network", category: "D", vertical: "V3", basePrice: 15 },
-        { id: 38, originalId: 3, name: "Renewable Energy Solar Grid", fullName: "Renewable Energy Solar Grid (Operational)", category: "D", vertical: "V1", basePrice: 20 },
-        { id: 39, originalId: 32, name: "Strategic Insurance & Risk Hedging Contract Portfolio", fullName: "Strategic Insurance & Risk Hedging Contract Portfolio", category: "D", vertical: "V4", basePrice: 7 },
-        { id: 40, originalId: 20, name: "Enterprise ERP & Automation System", fullName: "Enterprise ERP & Automation System", category: "D", vertical: "V2", basePrice: 10 },
-    ];
+    function getDefaultPhases() {
+        return [
+            { id: 1, name: "Welcome & Briefing", desc: "Welcome address, event ground rules overview, and team orientation." },
+            { id: 2, name: "Sector Allocation", desc: "Sector selection and domain strategy assignment for all competing teams." },
+            { id: 3, name: "Premium Auction", desc: "High-value flagship asset bidding round." },
+            { id: 4, name: "Core Auction", desc: "Core business driver asset bidding round." },
+            { id: 5, name: "Support Auction", desc: "Enabler, infrastructure, and technology asset bidding round." },
+            { id: 6, name: "Industry Disruption", desc: "Unforeseen macro-economic shift event reshuffling strategic valuations." },
+            { id: 7, name: "Negotiation Window", desc: "Inter-team trading, sector realignment, and deal-making phase." },
+            { id: 8, name: "Redistribution Market", desc: "Secondary asset redistribution and capital balancing market." },
+            { id: 9, name: "Final PPT Submission", desc: "Teams compile and submit their final pitch presentation decks." },
+            { id: 10, name: "Evaluation", desc: "Executive jury panel reviews portfolios, strategic depth, and risk discipline." },
+            { id: 11, name: "Results", desc: "Grand Finale winners announcement and awards presentation." }
+        ];
+    }
 
-    // Vertical labels
-    const VERTICAL_NAMES = {
-        "V1": "Core Value Creation",
-        "V2": "Enablers & Technology",
-        "V3": "Market Access & Distribution",
-        "V4": "Stability & Strategic"
-    };
+    function getDefaultTeams() {
+        return [
+            { id: 1, name: "Team Apex Velocity", members: "Alex, Jordan, Sam", sector: "Formula 1 & Motorsports", remainingBudget: 100 },
+            { id: 2, name: "Team Ocean Dynamics", members: "Chris, Taylor, Morgan", sector: "OceanX (Marine & Water Mobility)", remainingBudget: 100 },
+            { id: 3, name: "Team Aero Horizon", members: "Riley, Casey, Drew", sector: "SkyRush (Air Mobility & Aviation Innovation)", remainingBudget: 100 },
+            { id: 4, name: "Team Drive Matrix", members: "Avery, Quinn, Dakota", sector: "DriveVerse (Future Ground Mobility)", remainingBudget: 100 },
+            { id: 5, name: "Team HyperDrive", members: "Reese, Peyton, Hayden", sector: "Formula 1 & Motorsports", remainingBudget: 100 },
+            { id: 6, name: "Team Nautilus", members: "Emerson, Rowan, Kai", sector: "OceanX (Marine & Water Mobility)", remainingBudget: 100 },
+            { id: 7, name: "Team Skystream", members: "Skyler, Jesse, Frankie", sector: "SkyRush (Air Mobility & Aviation Innovation)", remainingBudget: 100 },
+            { id: 8, name: "Team GroundForce", members: "Micah, Shiloh, Logan", sector: "DriveVerse (Future Ground Mobility)", remainingBudget: 100 }
+        ];
+    }
 
-    // Disaster multipliers (from vision.pdf)
-    const DISASTER_TABLE = {
-        "W": { "A": 1.20, "B": 1.00, "C": 1.00, "D": 0.80 },
-        "X": { "B": 1.20, "C": 1.00, "A": 0.80, "D": 1.00 },
-        "Y": { "C": 1.20, "D": 1.00, "A": 1.00, "B": 0.80 },
-        "Z": { "D": 1.20, "A": 1.00, "B": 1.00, "C": 0.80 }
-    };
+    const DEFAULT_PASSCODE = 'bid@2026@adm!n';
+    const STORAGE_KEY = 'bid_biz_finale_dynamic_v10';
+    const BROADCAST_CHANNEL_NAME = 'bid_biz_events_v10';
 
-    // Team colors
-    const TEAM_COLORS = [
-        '#ef4444', '#3b82f6', '#22c55e', '#f59e0b',
-        '#a855f7', '#ec4899', '#14b8a6', '#f97316'
-    ];
-
-    const INITIAL_CAPITAL = 100;
-    const NUM_TEAMS = 8;
-
-    // ===========================
-    // APPLICATION STATE
-    // ===========================
+    // APPLICATION DYNAMIC STATE
     let state = {
-        teams: [],
-        sales: [],              // { assetId, teamIndex, price, order }
-        unsoldAssets: [],
-        currentView: 'auction',
-        auctionAssetId: null,    // Currently auctioned asset ID
-        currentBid: 0,           // Current highest bid
-        selectedTeamIndex: null, // Selected team for bid
-        disasterCode: null,
-        disasterApplied: false,
-        saleOrder: 0
+        role: 'participant',
+        currentPhase: 1,
+        activeView: 'rulebook', // RULEBOOK DEFAULT LANDING VIEW
+        activeAdminSubtab: 'auction',
+        announcements: [
+            { id: 1, text: "Welcome to Bid A Biz Grand Finale! Real-time offline auction updates will be broadcast live.", time: new Date().toLocaleTimeString() }
+        ],
+        eventPhases: getDefaultPhases(),
+        teams: getDefaultTeams(),
+        assets: getDefaultAssets(),
+        historyStack: []
     };
 
+    let editingAssetId = null;
+
     // ===========================
-    // STATE PERSISTENCE
+    // NATIVE WEB SYSTEM NOTIFICATIONS & AUDIO CHIME
     // ===========================
-    const STORAGE_KEY = 'bid_crusades_state';
+    function playChimeSound() {
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            const ctx = new AudioCtx();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+
+            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start();
+            osc.stop(ctx.currentTime + 0.35);
+        } catch (e) {}
+    }
+
+    function requestNotificationPermission(isAutoPrompt = false) {
+        if (!('Notification' in window)) {
+            if (!isAutoPrompt) showToast('Desktop Notifications not supported in this browser.', true);
+            return;
+        }
+
+        Notification.requestPermission().then(permission => {
+            updateNotificationButtonUI(permission);
+            if (permission === 'granted') {
+                showToast('<i class="fa-solid fa-bell"></i> Native System Notifications activated!');
+                sendSystemNotification('Bid A Biz Notifications Active', 'You will receive OS desktop alerts for live auction updates and announcements.');
+            } else if (permission === 'denied' && !isAutoPrompt) {
+                showToast('Notifications blocked in browser settings.', true);
+            }
+        });
+    }
+
+    function updateNotificationButtonUI(permission) {
+        const btn = document.getElementById('btn-enable-notifications');
+        if (!btn) return;
+        const status = permission || (('Notification' in window) ? Notification.permission : 'unsupported');
+        if (status === 'granted') {
+            btn.innerHTML = '<i class="fa-solid fa-bell"></i> Notifications Active';
+            btn.style.borderColor = 'var(--border-subtle)';
+            btn.style.color = 'var(--text-primary)';
+        } else if (status === 'denied') {
+            btn.innerHTML = '<i class="fa-solid fa-bell-slash"></i> Blocked';
+            btn.style.borderColor = 'var(--border-subtle)';
+            btn.style.color = 'var(--text-muted)';
+        } else {
+            btn.innerHTML = '<i class="fa-solid fa-bell"></i> Notifications';
+            btn.style.borderColor = 'var(--border-subtle)';
+            btn.style.color = 'var(--text-secondary)';
+        }
+    }
+
+    function sendSystemNotification(title, bodyText) {
+        if ('Notification' in window && Notification.permission === 'granted') {
+            try {
+                const notif = new Notification(title, {
+                    body: bodyText,
+                    tag: 'bid-biz-' + Date.now(),
+                    renotify: true
+                });
+                playChimeSound();
+            } catch (e) {
+                console.error("OS Notification error:", e);
+            }
+        }
+    }
+
+    // ===========================
+    // BROADCAST CHANNEL & STORAGE SYNC
+    // ===========================
+    let broadcastChannel = null;
+    try {
+        if ('BroadcastChannel' in window) {
+            broadcastChannel = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
+            broadcastChannel.onmessage = function (event) {
+                if (event.data && event.data.type === 'STATE_UPDATE') {
+                    const oldLatestNotice = state.announcements.length > 0 ? state.announcements[state.announcements.length - 1].text : '';
+                    loadState();
+                    renderAllViews();
+                    const newLatestNotice = state.announcements.length > 0 ? state.announcements[state.announcements.length - 1].text : '';
+                    
+                    showToast('<i class="fa-solid fa-bolt"></i> Live update received!');
+
+                    if (newLatestNotice && newLatestNotice !== oldLatestNotice) {
+                        sendSystemNotification('Bid A Biz Announcement', newLatestNotice);
+                    } else {
+                        sendSystemNotification('Live Auction Update', 'The event state or leaderboard has been updated live.');
+                    }
+                }
+            };
+        }
+    } catch (e) { }
+
+    window.addEventListener('storage', function (e) {
+        if (e.key === STORAGE_KEY) {
+            loadState();
+            renderAllViews();
+            showToast('<i class="fa-solid fa-bolt"></i> Live update synced across tabs!');
+            sendSystemNotification('Event State Updated', 'Event data has been updated by the Admin.');
+        }
+    });
 
     function saveState() {
         try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        } catch (e) { /* silently fail */ }
+            const dataToSave = {
+                currentPhase: state.currentPhase,
+                announcements: state.announcements,
+                eventPhases: state.eventPhases,
+                teams: state.teams,
+                assets: state.assets,
+                historyStack: state.historyStack
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+        } catch (e) { }
+    }
+
+    function broadcastUpdate() {
+        saveState();
+        if (broadcastChannel) {
+            try {
+                broadcastChannel.postMessage({ type: 'STATE_UPDATE', timestamp: Date.now() });
+            } catch (e) { }
+        }
     }
 
     function loadState() {
@@ -111,1550 +244,1079 @@
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 const parsed = JSON.parse(saved);
-                state = { ...state, ...parsed };
-                return true;
+                state.currentPhase = parsed.currentPhase || 1;
+                state.announcements = parsed.announcements || state.announcements;
+                state.eventPhases = (parsed.eventPhases && parsed.eventPhases.length > 0) ? parsed.eventPhases : getDefaultPhases();
+                state.teams = (parsed.teams && parsed.teams.length > 0) ? parsed.teams : getDefaultTeams();
+                state.assets = (parsed.assets && parsed.assets.length > 0) ? parsed.assets : getDefaultAssets();
+                state.historyStack = parsed.historyStack || [];
             }
-        } catch (e) { /* silently fail */ }
-        return false;
+        } catch (e) { }
     }
 
-    function initTeams() {
-        state.teams = [];
-        for (let i = 0; i < NUM_TEAMS; i++) {
-            state.teams.push({
-                name: `Team ${i + 1}`,
-                budget: INITIAL_CAPITAL,
-                color: TEAM_COLORS[i]
+    function pushHistorySnapshot() {
+        if (state.historyStack.length > 20) state.historyStack.shift();
+        state.historyStack.push(JSON.stringify({
+            currentPhase: state.currentPhase,
+            announcements: state.announcements,
+            eventPhases: state.eventPhases,
+            teams: state.teams,
+            assets: state.assets
+        }));
+    }
+
+    function undoLastAction() {
+        if (state.historyStack.length === 0) {
+            showToast('No actions to undo!', true);
+            return;
+        }
+        const lastSnapshot = JSON.parse(state.historyStack.pop());
+        state.currentPhase = lastSnapshot.currentPhase;
+        state.announcements = lastSnapshot.announcements;
+        state.eventPhases = lastSnapshot.eventPhases;
+        state.teams = lastSnapshot.teams;
+        state.assets = lastSnapshot.assets;
+        broadcastUpdate();
+        renderAllViews();
+        showToast('<i class="fa-solid fa-rotate-left"></i> Previous action undone!');
+    }
+
+    // ===========================
+    // ROLE & VIEW NAVIGATION
+    // ===========================
+
+    function setRole(role) {
+        state.role = role;
+        const adminNav = document.getElementById('nav-admin');
+        const adminIndicator = document.getElementById('admin-session-indicator');
+
+        if (role === 'admin') {
+            if (adminNav) adminNav.style.display = 'inline-flex';
+            if (adminIndicator) adminIndicator.style.display = 'flex';
+        } else {
+            if (adminNav) adminNav.style.display = 'none';
+            if (adminIndicator) adminIndicator.style.display = 'none';
+            if (state.activeView === 'admin') switchView('rulebook');
+        }
+    }
+
+    function switchView(viewId) {
+        state.activeView = viewId;
+
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.view === viewId);
+        });
+
+        document.querySelectorAll('main .view').forEach(sec => {
+            sec.classList.toggle('active', sec.id === `view-${viewId}`);
+        });
+
+        if (viewId === 'rulebook') initPDFViewer('rulebook', 'Rulebook.pdf');
+        if (viewId === 'catalogue') initPDFViewer('catalogue', 'Asset List.pdf');
+    }
+
+    function switchAdminSubtab(subtabId) {
+        state.activeAdminSubtab = subtabId;
+        document.querySelectorAll('.admin-subtab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.subtab === subtabId);
+        });
+        document.querySelectorAll('.admin-subtab-panel').forEach(panel => {
+            panel.classList.toggle('active', panel.id === `admin-subtab-panel-${subtabId}`);
+        });
+    }
+
+    function renderAllViews() {
+        renderHeaderAndAnnouncements();
+        renderLeaderboard();
+        renderPortfoliosView();
+        renderAdminControls();
+    }
+
+    function renderHeaderAndAnnouncements() {
+        const curPhaseObj = state.eventPhases.find(p => p.id === state.currentPhase) || state.eventPhases[0] || { id: 1, name: "Event in Progress" };
+        document.getElementById('header-phase-num').innerText = `Phase ${curPhaseObj.id}/${state.eventPhases.length}`;
+        document.getElementById('header-phase-name').innerText = curPhaseObj.name;
+
+        const dropdownMenu = document.getElementById('header-phase-dropdown-menu');
+        if (dropdownMenu) {
+            dropdownMenu.innerHTML = state.eventPhases.map(p => {
+                const isActive = p.id === state.currentPhase;
+                return `
+                    <div class="phase-dropdown-item ${isActive ? 'active' : ''}" ${state.role === 'admin' ? `onclick="window.BidApp.setActivePhase(${p.id})"` : ''}>
+                        <div class="phase-dropdown-title">
+                            <span>${p.id}. ${p.name}</span>
+                            ${isActive ? '<span class="role-badge" style="font-size:0.7rem; background:var(--accent-gold); color:black; font-weight:800;">ACTIVE</span>' : ''}
+                        </div>
+                        <div class="phase-dropdown-desc">${p.desc}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        if (state.announcements.length > 0) {
+            const latest = state.announcements[state.announcements.length - 1];
+            document.getElementById('announcement-text').innerText = latest.text;
+        }
+    }
+
+    // 1. DYNAMIC LEADERBOARD RENDERER
+    function renderLeaderboard() {
+        const tbody = document.getElementById('leaderboard-tbody');
+        if (!tbody) return;
+
+        const teamStats = state.teams.map(t => {
+            const ownedAssets = state.assets.filter(a => a.ownerTeamId === t.id && a.status === 'Sold');
+            const assetsCount = ownedAssets.length;
+            const totalSpend = ownedAssets.reduce((sum, a) => sum + (a.purchasePrice || 0), 0);
+            return {
+                ...t,
+                assetsCount,
+                totalSpend,
+                ownedAssets
+            };
+        });
+
+        teamStats.sort((a, b) => (b.assetsCount - a.assetsCount) || (b.remainingBudget - a.remainingBudget));
+
+        const totalSold = state.assets.filter(a => a.status === 'Sold').length;
+        document.getElementById('lb-teams-count').innerText = state.teams.length;
+        document.getElementById('lb-assets-sold').innerText = `${totalSold}/${state.assets.length}`;
+
+        tbody.innerHTML = teamStats.map((t, idx) => {
+            const sectorClass = getSectorBadgeClass(t.sector);
+            return `
+                <tr>
+                    <td><strong style="color:var(--accent-orange);">#${idx + 1}</strong></td>
+                    <td>
+                        <strong style="font-size:1.05rem; color:var(--text-primary); cursor:pointer;" onclick="window.BidApp.openPortfolioModal(${t.id})">
+                            ${t.name}
+                        </strong>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">${t.members || 'No members listed'}</div>
+                    </td>
+                    <td><span class="sector-badge ${sectorClass}">${t.sector || 'Unassigned'}</span></td>
+                    <td><strong style="color:var(--accent-emerald); font-family:'JetBrains Mono';">₹${t.remainingBudget} Cr</strong></td>
+                    <td><span class="role-badge" style="font-size:0.85rem;">${t.assetsCount}/5</span></td>
+                    <td><strong style="font-family:'JetBrains Mono'; color:var(--accent-rose);">₹${t.totalSpend} Cr</strong></td>
+                    <td>
+                        <button class="pdf-btn" onclick="window.BidApp.openPortfolioModal(${t.id})">View Portfolio <i class="fa-solid fa-briefcase"></i></button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    // 2. DYNAMIC TEAM PORTFOLIOS RENDERER
+    function renderPortfoliosView() {
+        const container = document.getElementById('portfolios-grid-container');
+        const selector = document.getElementById('portfolio-team-selector');
+        if (!container || !selector) return;
+
+        const selectedVal = selector.value;
+        selector.innerHTML = '<option value="all">All Teams</option>' + state.teams.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+        selector.value = selectedVal || 'all';
+
+        let filterTeams = state.teams;
+        if (selector.value !== 'all') {
+            filterTeams = state.teams.filter(t => t.id === parseInt(selector.value));
+        }
+
+        container.innerHTML = filterTeams.map(t => {
+            const ownedAssets = state.assets.filter(a => a.ownerTeamId === t.id && a.status === 'Sold');
+            const totalSpend = ownedAssets.reduce((sum, a) => sum + (a.purchasePrice || 0), 0);
+            const sectorClass = getSectorBadgeClass(t.sector);
+            const isFull = ownedAssets.length >= 5;
+
+            return `
+                <div class="portfolio-card">
+                    <div class="portfolio-card-header">
+                        <div>
+                            <div class="portfolio-team-title">${t.name}</div>
+                            <span class="sector-badge ${sectorClass}">${t.sector || 'Unassigned'}</span>
+                        </div>
+                        <span class="portfolio-asset-badge ${isFull ? 'full' : ''}">${isFull ? '5/5 FULL' : `${ownedAssets.length}/5 Assets`}</span>
+                    </div>
+
+                    <div class="portfolio-stats-grid">
+                        <div class="portfolio-stat-item">
+                            <label>REMAINING BUDGET</label>
+                            <div class="portfolio-stat-val" style="color:var(--accent-emerald);">₹${t.remainingBudget} Cr</div>
+                        </div>
+                        <div class="portfolio-stat-item">
+                            <label>TOTAL SPEND</label>
+                            <div class="portfolio-stat-val" style="color:var(--accent-rose);">₹${totalSpend} Cr</div>
+                        </div>
+                    </div>
+
+                    <h4 style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:0.5rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">Acquired Portfolio (${ownedAssets.length}):</h4>
+                    <div class="portfolio-assets-container">
+                        ${ownedAssets.length === 0 ? '<div style="font-size:0.82rem; color:var(--text-muted); font-style:italic; padding:0.6rem; text-align:center; background:var(--bg-primary); border-radius:4px;">No assets acquired yet</div>' :
+                            ownedAssets.map(a => `
+                                <div class="portfolio-asset-item">
+                                    <span class="portfolio-asset-name" title="#${a.id} ${a.name}">#${a.id} ${a.name}</span>
+                                    <span class="portfolio-asset-price">₹${a.purchasePrice} Cr</span>
+                                </div>
+                            `).join('')
+                        }
+                    </div>
+
+                    <button class="btn-primary-glow btn-small" style="margin-top:auto;" onclick="window.BidApp.openPortfolioModal(${t.id})">
+                        <i class="fa-solid fa-briefcase"></i> Inspect Portfolio Details
+                    </button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // 3. DYNAMIC ADMIN CONTROLS RENDERER
+    function renderAdminControls() {
+        const assignAssetSel = document.getElementById('admin-assign-asset-select');
+        const assignTeamSel = document.getElementById('admin-assign-team-select');
+        const sectorTeamSel = document.getElementById('admin-sector-team-select');
+        const budgetTeamSel = document.getElementById('admin-budget-team-select');
+        const phaseSelect = document.getElementById('admin-phase-select');
+        const teamsEditList = document.getElementById('admin-teams-edit-list');
+        const phasesEditList = document.getElementById('admin-phases-edit-list');
+        const assetsTbody = document.getElementById('admin-assets-tbody');
+
+        if (!assignAssetSel) return;
+
+        const availableAssets = state.assets.filter(a => a.status === 'Available');
+        assignAssetSel.innerHTML = availableAssets.length === 0 ? '<option value="">No Available Assets</option>' :
+            availableAssets.map(a => `<option value="${a.id}">[Asset #${a.id}] ${a.name} (Base: ₹${a.basePrice} Cr)</option>`).join('');
+
+        const teamOptions = state.teams.length === 0 ? '<option value="">No Teams Created</option>' :
+            state.teams.map(t => {
+                const ownedCount = state.assets.filter(a => a.ownerTeamId === t.id && a.status === 'Sold').length;
+                const isFull = ownedCount >= 5;
+                return `<option value="${t.id}" ${isFull ? 'disabled' : ''}>
+                    ${isFull ? '[FULL 5/5] ' : ''}${t.name} (Assets: ${ownedCount}/5, Budget: ₹${t.remainingBudget} Cr)
+                </option>`;
+            }).join('');
+        assignTeamSel.innerHTML = teamOptions;
+
+        const generalTeamOptions = state.teams.length === 0 ? '<option value="">No Teams Created</option>' :
+            state.teams.map(t => `<option value="${t.id}">${t.name} (Budget: ₹${t.remainingBudget} Cr)</option>`).join('');
+        sectorTeamSel.innerHTML = generalTeamOptions;
+        budgetTeamSel.innerHTML = generalTeamOptions;
+
+        phaseSelect.innerHTML = state.eventPhases.map(p => `<option value="${p.id}">${p.id}. ${p.name}</option>`).join('');
+        phaseSelect.value = state.currentPhase;
+
+        const assetFilter = document.getElementById('admin-asset-status-filter').value;
+        let showAssets = state.assets;
+        if (assetFilter !== 'all') {
+            showAssets = state.assets.filter(a => a.status === assetFilter);
+        }
+
+        assetsTbody.innerHTML = showAssets.length === 0 ? '<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">No assets match filter</td></tr>' :
+            showAssets.map(a => {
+                const ownerTeam = state.teams.find(t => t.id === a.ownerTeamId);
+                return `
+                <tr>
+                    <td><strong>#${a.id}</strong></td>
+                    <td>
+                        <input type="text" class="form-control" id="edit-aname-${a.id}" value="${a.name}" style="padding:0.3rem 0.5rem; font-size:0.85rem;">
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" id="edit-aprice-${a.id}" value="${a.basePrice}" min="1" step="1" style="width:70px; padding:0.3rem; font-size:0.85rem; text-align:center;">
+                    </td>
+                    <td>
+                        <span class="role-badge">${a.category || 'A'} (${a.vertical || 'V1'})</span>
+                    </td>
+                    <td>${ownerTeam ? ownerTeam.name : '<span style="color:var(--text-muted);">Unassigned</span>'}</td>
+                    <td>${a.purchasePrice ? `₹${a.purchasePrice} Cr` : '-'}</td>
+                    <td><span class="role-badge" style="background:${a.status === 'Sold' ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.05)'}; color:${a.status === 'Sold' ? 'var(--accent-emerald)' : 'var(--text-muted)'}">${a.status}</span></td>
+                    <td>
+                        <button class="pdf-btn" style="padding:0.25rem 0.5rem; font-size:0.8rem;" onclick="window.BidApp.saveAssetDetails(${a.id})">Save</button>
+                        ${a.status === 'Sold' ? `
+                            <button class="pdf-btn" style="padding:0.25rem 0.5rem; font-size:0.8rem;" onclick="window.BidApp.openEditSaleModal(${a.id})">Edit Price</button>
+                            <button class="pdf-btn" style="padding:0.25rem 0.5rem; font-size:0.8rem; border-color:var(--accent-rose); color:var(--accent-rose);" onclick="window.BidApp.releaseAsset(${a.id})">Release</button>
+                        ` : ''}
+                        <button class="btn-danger btn-small" style="padding:0.25rem 0.5rem; font-size:0.8rem;" onclick="window.BidApp.deleteAsset(${a.id})">Delete</button>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+
+        teamsEditList.innerHTML = state.teams.length === 0 ? '<p style="color:var(--text-muted);">No teams created yet.</p>' :
+            state.teams.map(t => `
+            <div style="display:grid; grid-template-columns: 1fr 1fr 100px 140px 80px 80px; gap:0.6rem; align-items:center; margin-bottom:0.8rem; background:#0f172a; padding:0.6rem; border-radius:6px; border:1px solid #1e293b;">
+                <input type="text" class="form-control" id="edit-tname-${t.id}" value="${t.name}">
+                <input type="text" class="form-control" id="edit-tmembers-${t.id}" value="${t.members}">
+                <input type="number" class="form-control" id="edit-tbudget-${t.id}" value="${t.remainingBudget}" min="0" step="1" title="Remaining Budget">
+                <select class="form-control" id="edit-tsector-${t.id}">
+                    <option value="Formula 1 & Motorsports" ${t.sector === 'Formula 1 & Motorsports' ? 'selected' : ''}>Formula 1</option>
+                    <option value="OceanX (Marine & Water Mobility)" ${t.sector === 'OceanX (Marine & Water Mobility)' ? 'selected' : ''}>OceanX</option>
+                    <option value="SkyRush (Air Mobility & Aviation Innovation)" ${t.sector === 'SkyRush (Air Mobility & Aviation Innovation)' ? 'selected' : ''}>SkyRush</option>
+                    <option value="DriveVerse (Future Ground Mobility)" ${t.sector === 'DriveVerse (Future Ground Mobility)' ? 'selected' : ''}>DriveVerse</option>
+                    <option value="Unassigned" ${!t.sector || t.sector === 'Unassigned' ? 'selected' : ''}>Unassigned</option>
+                </select>
+                <button class="btn-primary-glow btn-small" onclick="window.BidApp.saveTeamDetails(${t.id})">Save</button>
+                <button class="btn-danger btn-small" onclick="window.BidApp.deleteTeam(${t.id})">Delete</button>
+            </div>
+        `).join('');
+
+        phasesEditList.innerHTML = state.eventPhases.length === 0 ? '<p style="color:var(--text-muted);">No event phases created.</p>' :
+            state.eventPhases.map(p => `
+            <div style="display:grid; grid-template-columns: 60px 1.5fr 3fr 80px 80px; gap:0.6rem; align-items:center; margin-bottom:0.8rem; background:#0f172a; padding:0.6rem; border-radius:6px; border:1px solid #1e293b;">
+                <strong style="color:var(--accent-gold); font-size:0.9rem; text-align:center;">#${p.id}</strong>
+                <input type="text" class="form-control" id="edit-pname-${p.id}" value="${p.name}">
+                <input type="text" class="form-control" id="edit-pdesc-${p.id}" value="${p.desc}">
+                <button class="btn-primary-glow btn-small" onclick="window.BidApp.savePhaseDetails(${p.id})">Save</button>
+                <button class="btn-danger btn-small" onclick="window.BidApp.deletePhase(${p.id})">Delete</button>
+            </div>
+        `).join('');
+    }
+
+    function getSectorBadgeClass(sector) {
+        if (!sector) return 'sector-unassigned';
+        if (sector.includes('Formula 1')) return 'sector-f1';
+        if (sector.includes('OceanX')) return 'sector-oceanx';
+        if (sector.includes('SkyRush')) return 'sector-skyrush';
+        if (sector.includes('DriveVerse')) return 'sector-driveverse';
+        return 'sector-unassigned';
+    }
+
+    // ===========================
+    // CONTINUOUS SCROLL & MOUSE WHEEL ZOOMABLE PDF MODULE
+    // ===========================
+    const pdfState = {
+        rulebook: { pdfDoc: null, pageNum: 1, zoom: 1.0, url: 'Rulebook.pdf' },
+        catalogue: { pdfDoc: null, pageNum: 1, zoom: 1.0, url: 'Asset List.pdf' }
+    };
+
+    function initPDFViewer(type, pdfUrl) {
+        const ps = pdfState[type];
+        ps.url = pdfUrl;
+
+        const container = document.getElementById(`${type}-canvas-container`);
+        const viewportWrapper = document.getElementById(`${type}-pdf-body`);
+        const fallbackIframe = document.getElementById(`${type}-fallback-iframe`);
+
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
+                ps.pdfDoc = pdf;
+                document.getElementById(`${type}-page-count`).innerText = pdf.numPages;
+                renderPDFDocument(type);
+
+                if (container) container.style.display = 'flex';
+                if (fallbackIframe) fallbackIframe.style.display = 'none';
+
+                // Setup wheel zoom & scroll tracking
+                setupPDFWheelAndScrollHandlers(type);
+            }).catch(err => {
+                if (container) container.style.display = 'none';
+                if (fallbackIframe) fallbackIframe.style.display = 'block';
             });
+        } else {
+            if (container) container.style.display = 'none';
+            if (fallbackIframe) fallbackIframe.style.display = 'block';
         }
     }
 
-    // ===========================
-    // CUSTOM MODAL SYSTEM
-    // ===========================
-    function showCustomModal(title, message, showInput, confirmText, isDanger, onConfirm) {
-        const overlay = document.getElementById('custom-dialog-overlay');
-        const titleEl = document.getElementById('dialog-title');
-        const msgEl = document.getElementById('dialog-message');
-        const inputEl = document.getElementById('dialog-input');
-        const cancelBtn = document.getElementById('dialog-btn-cancel');
-        const confirmBtn = document.getElementById('dialog-btn-confirm');
+    function renderPDFDocument(type) {
+        const ps = pdfState[type];
+        if (!ps.pdfDoc) return;
 
-        titleEl.innerHTML = title;
-        msgEl.innerHTML = message;
-        inputEl.style.display = showInput ? 'block' : 'none';
-        inputEl.value = '';
-        confirmBtn.innerHTML = confirmText;
-
-        confirmBtn.className = isDanger ? 'btn-danger' : 'btn-sell';
-
-        overlay.style.display = 'flex';
-        if (showInput) {
-            setTimeout(() => inputEl.focus(), 50);
-        }
-
-        const close = () => {
-            overlay.style.display = 'none';
-            cancelBtn.removeEventListener('click', close);
-            confirmBtn.removeEventListener('click', handleConfirm);
-            inputEl.removeEventListener('keypress', handleEnter);
-        };
-
-        const handleConfirm = () => {
-            const val = showInput ? inputEl.value : true;
-            close();
-            onConfirm(val);
-        };
-
-        const handleEnter = (e) => {
-            if (e.key === 'Enter') handleConfirm();
-        };
-
-        cancelBtn.addEventListener('click', close);
-        confirmBtn.addEventListener('click', handleConfirm);
-        if (showInput) inputEl.addEventListener('keypress', handleEnter);
-    }
-
-    // ===========================
-    // HELPERS
-    // ===========================
-
-    function getAssetById(id) {
-        return ASSETS.find(a => a.id === id);
-    }
-
-    function getSaleForAsset(assetId) {
-        return state.sales.find(s => s.assetId === assetId);
-    }
-
-    function isAssetSold(assetId) {
-        return state.sales.some(s => s.assetId === assetId);
-    }
-
-    function isAssetUnsold(assetId) {
-        return state.unsoldAssets && state.unsoldAssets.includes(assetId);
-    }
-
-    function getTeamAssets(teamIndex) {
-        return state.sales.filter(s => s.teamIndex === teamIndex);
-    }
-
-    function getTeamSpent(teamIndex) {
-        return getTeamAssets(teamIndex).reduce((sum, s) => sum + s.price, 0);
-    }
-
-    function getSoldCount() {
-        return state.sales.length;
-    }
-
-    function getMinIncrement(currentPrice) {
-        if (currentPrice < 15) return 1;
-        if (currentPrice <= 25) return 2;
-        return 4;
-    }
-
-    function getDisasterMultiplier(category, code) {
-        if (!code || !DISASTER_TABLE[code]) return 1;
-        return DISASTER_TABLE[code][category] || 1;
-    }
-
-    // ===========================
-    // TOAST NOTIFICATIONS
-    // ===========================
-    function showToast(message, type = 'info') {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.textContent = message;
-        container.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
-    }
-
-    // ===========================
-    // NAVIGATION
-    // ===========================
-    function switchView(viewName) {
-        state.currentView = viewName;
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`view-${viewName}`).classList.add('active');
-        document.querySelector(`.nav-btn[data-view="${viewName}"]`).classList.add('active');
-
-        // Refresh view content
-        if (viewName === 'assets') renderAssetsView();
-        if (viewName === 'teams') renderTeamsView();
-        if (viewName === 'results') renderResultsView();
-        if (viewName === 'auction') renderAuctionSidebar();
-    }
-
-    // ===========================
-    // HEADER UPDATES
-    // ===========================
-    function updateHeaderStats() {
-        document.getElementById('header-sold-count').textContent = `${getSoldCount()}/40`;
-    }
-
-    // ===========================
-    // AUCTION SIDEBAR
-    // ===========================
-    function renderAuctionSidebar(filter = 'all') {
-        const container = document.getElementById('asset-list-container');
+        const container = document.getElementById(`${type}-canvas-container`);
+        if (!container) return;
         container.innerHTML = '';
 
-        let filteredAssets = ASSETS;
-        if (filter === 'available') filteredAssets = ASSETS.filter(a => !isAssetSold(a.id));
-        if (filter === 'sold') filteredAssets = ASSETS.filter(a => isAssetSold(a.id));
+        const totalPages = ps.pdfDoc.numPages;
 
-        filteredAssets.forEach(asset => {
-            const sold = isAssetSold(asset.id);
-            const unsold = isAssetUnsold(asset.id);
-            const sale = getSaleForAsset(asset.id);
-            const isActive = state.auctionAssetId === asset.id;
+        for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+            const pageCanvas = document.createElement('canvas');
+            pageCanvas.id = `${type}-page-canvas-${pageNum}`;
+            pageCanvas.className = 'pdf-page-canvas';
+            container.appendChild(pageCanvas);
 
-            const item = document.createElement('div');
-            item.className = `asset-list-item${sold ? ' sold' : ''}${unsold && !sold ? ' unsold' : ''}${isActive ? ' active-auction' : ''}`;
+            (function (num, canvas) {
+                ps.pdfDoc.getPage(num).then(page => {
+                    const ctx = canvas.getContext('2d');
+                    const viewport = page.getViewport({ scale: ps.zoom });
 
-            if (sold) {
-                item.innerHTML = `
-                    <span class="ali-id">#${asset.id}</span>
-                    <span class="ali-name">${asset.name}</span>
-                    <span class="ali-sold-tag">${state.teams[sale.teamIndex].name}</span>
-                    <span class="ali-price">₹${sale.price} Cr</span>
-                    <span class="ali-edit-btn" title="Edit sale" data-asset-id="${asset.id}">✏️</span>
-                `;
-                item.querySelector('.ali-edit-btn').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    editSoldAsset(asset.id);
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    const renderContext = {
+                        canvasContext: ctx,
+                        viewport: viewport
+                    };
+                    page.render(renderContext);
                 });
-            } else if (unsold) {
-                item.innerHTML = `
-                    <span class="ali-id">#${asset.id}</span>
-                    <span class="ali-name" style="opacity: 0.6;">${asset.name}</span>
-                    <span class="ali-sold-tag" style="background: var(--text-muted); color: var(--bg-main);">UNSOLD</span>
-                `;
-                item.addEventListener('click', () => startAuction(asset.id));
-            } else {
-                item.innerHTML = `
-                    <span class="ali-id">#${asset.id}</span>
-                    <span class="ali-name">${asset.name}</span>
-                    <span class="ali-price">₹${asset.basePrice} Cr</span>
-                `;
-                item.addEventListener('click', () => startAuction(asset.id));
-            }
-
-            container.appendChild(item);
-        });
-    }
-
-    // ===========================
-    // AUCTION STAGE
-    // ===========================
-    function startAuction(assetId) {
-        if (isAssetSold(assetId)) return;
-
-        const asset = getAssetById(assetId);
-        state.auctionAssetId = assetId;
-        state.currentBid = asset.basePrice;
-        state.selectedTeamIndex = null;
-
-        // Show active state
-        document.getElementById('auction-empty-state').style.display = 'none';
-        document.getElementById('auction-active-state').style.display = 'flex';
-        document.getElementById('sold-overlay').style.display = 'none';
-
-        // Populate card
-        document.getElementById('auction-asset-category').textContent = asset.category;
-        document.getElementById('auction-asset-id').textContent = `Asset #${asset.id}`;
-        document.getElementById('auction-asset-name').textContent = asset.fullName;
-        document.getElementById('auction-base-price').textContent = `₹${asset.basePrice} Cr`;
-
-        updateAuctionPrice();
-        updateBidInput();
-        renderTeamBidGrid();
-        renderAuctionSidebar();
-        updateSellButton();
-
-        saveState();
-    }
-
-    function updateAuctionPrice(oldPrice = null) {
-        const priceEl = document.getElementById('auction-current-price');
-
-        if (oldPrice !== null && oldPrice !== state.currentBid && typeof window.animateNumber === 'function') {
-            window.animateNumber(priceEl, oldPrice, state.currentBid);
-        } else {
-            priceEl.textContent = `₹${state.currentBid} Cr`;
-        }
-
-        // Bump animation
-        priceEl.classList.add('bump');
-        setTimeout(() => priceEl.classList.remove('bump'), 300);
-
-        const minInc = getMinIncrement(state.currentBid);
-        document.getElementById('auction-min-increment').textContent = `₹${minInc} Cr`;
-    }
-
-    function updateBidInput() {
-        const minInc = getMinIncrement(state.currentBid);
-        const inputEl = document.getElementById('bid-amount-input');
-        inputEl.value = minInc;
-        inputEl.min = minInc;
-        inputEl.step = 1;
-        updateBidDisplay();
-    }
-
-    function updateBidDisplay() {
-        const bidAmount = parseInt(document.getElementById('bid-amount-input').value) || 0;
-        const newTotal = state.currentBid + bidAmount;
-        document.getElementById('bid-total-display').textContent = newTotal;
-    }
-
-    function placeBid() {
-        const bidAmount = parseInt(document.getElementById('bid-amount-input').value) || 0;
-        const minInc = getMinIncrement(state.currentBid);
-
-        if (bidAmount < minInc) {
-            showToast(`Minimum increment is ₹${minInc} Cr`, 'error');
-            return;
-        }
-
-        const oldPrice = state.currentBid;
-        state.currentBid += bidAmount;
-        updateAuctionPrice(oldPrice);
-        updateBidInput();
-        renderTeamBidGrid();
-        updateSellButton();
-
-        showToast(`Bid raised to ₹${state.currentBid} Cr`, 'info');
-    }
-
-    // ===========================
-    // TEAM BID GRID
-    // ===========================
-    function renderTeamBidGrid() {
-        const grid = document.getElementById('team-bid-grid');
-        grid.innerHTML = '';
-
-        state.teams.forEach((team, idx) => {
-            const btn = document.createElement('button');
-            const canAfford = team.budget >= state.currentBid;
-            btn.className = `team-bid-btn${state.selectedTeamIndex === idx ? ' selected' : ''}${!canAfford ? ' insufficient' : ''}`;
-            btn.innerHTML = `
-                <span class="team-bid-name" style="color: ${team.color}">${team.name}</span>
-                <span class="team-bid-budget">₹${team.budget.toFixed(1)} Cr left</span>
-            `;
-
-            if (canAfford) {
-                btn.addEventListener('click', () => {
-                    state.selectedTeamIndex = idx;
-                    renderTeamBidGrid();
-                    updateSellButton();
-                });
-            }
-
-            grid.appendChild(btn);
-        });
-    }
-
-    function updateSellButton() {
-        const btn = document.getElementById('btn-sell');
-        if (state.selectedTeamIndex !== null) {
-            const team = state.teams[state.selectedTeamIndex];
-            btn.disabled = false;
-            btn.textContent = `🔨 SELL TO ${team.name.toUpperCase()} — ₹${state.currentBid} Cr`;
-        } else {
-            btn.disabled = true;
-            btn.textContent = '🔨 SELECT A TEAM FIRST';
+            })(pageNum, pageCanvas);
         }
     }
 
-    // ===========================
-    // SELL ASSET
-    // ===========================
-    function sellAsset() {
-        if (state.selectedTeamIndex === null || state.auctionAssetId === null) return;
+    function setupPDFWheelAndScrollHandlers(type) {
+        const ps = pdfState[type];
+        const viewportWrapper = document.getElementById(`${type}-pdf-body`);
+        if (!viewportWrapper || viewportWrapper.dataset.wheelBound) return;
 
-        const teamIdx = state.selectedTeamIndex;
-        const assetId = state.auctionAssetId;
-        const price = state.currentBid;
-        const asset = getAssetById(assetId);
-        const team = state.teams[teamIdx];
+        viewportWrapper.dataset.wheelBound = "true";
 
-        if (team.budget < price) {
-            showToast(`${team.name} cannot afford ₹${price} Cr!`, 'error');
-            return;
-        }
-
-        // Record sale
-        state.saleOrder++;
-        state.sales.push({
-            assetId: assetId,
-            teamIndex: teamIdx,
-            price: price,
-            order: state.saleOrder
-        });
-
-        if (state.unsoldAssets && state.unsoldAssets.includes(assetId)) {
-            state.unsoldAssets = state.unsoldAssets.filter(id => id !== assetId);
-        }
-
-        // Deduct budget
-        team.budget -= price;
-
-        // Show sold overlay
-        document.getElementById('sold-asset-name').textContent = asset.fullName;
-        document.getElementById('sold-team-name').textContent = team.name;
-        document.getElementById('sold-team-name').style.color = team.color;
-        document.getElementById('sold-price').textContent = `₹${price} Cr`;
-        document.getElementById('sold-overlay').style.display = 'flex';
-
-        updateHeaderStats();
-        saveState();
-
-        if (typeof window.launchConfetti === 'function') window.launchConfetti();
-        showToast(`${asset.name} sold to ${team.name} for ₹${price} Cr`, 'success');
-    }
-
-    function closeSoldOverlay() {
-        document.getElementById('sold-overlay').style.display = 'none';
-
-        const lastAssetId = state.auctionAssetId;
-        state.auctionAssetId = null;
-        state.currentBid = 0;
-        state.selectedTeamIndex = null;
-
-        // Auto-select the next available asset
-        let nextAssetId = null;
-        if (lastAssetId !== null) {
-            for (let i = lastAssetId; i < ASSETS.length; i++) {
-                const checkId = ASSETS[i].id;
-                if (!isAssetSold(checkId) && !isAssetUnsold(checkId)) {
-                    nextAssetId = checkId;
-                    break;
+        // MOUSE WHEEL ZOOM HANDLER (Ctrl + Wheel or Pinch)
+        viewportWrapper.addEventListener('wheel', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                const delta = e.deltaY < 0 ? 0.15 : -0.15;
+                const newZoom = Math.min(Math.max(0.4, ps.zoom + delta), 3.0);
+                if (newZoom !== ps.zoom) {
+                    ps.zoom = newZoom;
+                    renderPDFDocument(type);
                 }
             }
-        }
-
-        if (nextAssetId !== null) {
-            renderAuctionSidebar();
-            saveState();
-            startAuction(nextAssetId);
-        } else {
-            document.getElementById('auction-active-state').style.display = 'none';
-            document.getElementById('auction-empty-state').style.display = '';
-            renderAuctionSidebar();
-            saveState();
-        }
-    }
-
-    // ===========================
-    // EDIT SOLD ASSET
-    // ===========================
-    function editSoldAsset(assetId) {
-        const sale = getSaleForAsset(assetId);
-        if (!sale) return;
-        const asset = getAssetById(assetId);
-
-        const overlay = document.getElementById('edit-sale-overlay');
-        const titleEl = document.getElementById('edit-sale-title');
-        const teamSelect = document.getElementById('edit-sale-team');
-        const priceInput = document.getElementById('edit-sale-price');
-        const cancelBtn = document.getElementById('edit-sale-cancel');
-        const confirmBtn = document.getElementById('edit-sale-confirm');
-
-        titleEl.textContent = `✏️ Edit: ${asset.name}`;
-
-        // Populate team dropdown
-        teamSelect.innerHTML = '';
-        state.teams.forEach((team, idx) => {
-            const opt = document.createElement('option');
-            opt.value = idx;
-            opt.textContent = team.name;
-            if (idx === sale.teamIndex) opt.selected = true;
-            teamSelect.appendChild(opt);
-        });
-
-        // Set current price
-        priceInput.value = sale.price;
-
-        overlay.style.display = 'flex';
-
-        const close = () => {
-            overlay.style.display = 'none';
-            cancelBtn.removeEventListener('click', close);
-            confirmBtn.removeEventListener('click', handleSave);
-        };
-
-        const handleSave = () => {
-            const newTeamIndex = parseInt(teamSelect.value);
-            const newPrice = parseInt(priceInput.value);
-
-            if (isNaN(newPrice) || newPrice < 1) {
-                showToast('Price must be at least ₹1 Cr', 'error');
-                return;
-            }
-
-            const oldTeamIndex = sale.teamIndex;
-            const oldPrice = sale.price;
-
-            // Refund old team
-            state.teams[oldTeamIndex].budget += oldPrice;
-
-            // Check if new team can afford it
-            if (state.teams[newTeamIndex].budget < newPrice) {
-                // Undo refund
-                state.teams[oldTeamIndex].budget -= oldPrice;
-                showToast(`${state.teams[newTeamIndex].name} cannot afford ₹${newPrice} Cr (budget: ₹${state.teams[newTeamIndex].budget.toFixed(1)} Cr)`, 'error');
-                return;
-            }
-
-            // Deduct from new team
-            state.teams[newTeamIndex].budget -= newPrice;
-
-            // Update sale record
-            sale.teamIndex = newTeamIndex;
-            sale.price = newPrice;
-
-            saveState();
-            renderAuctionSidebar();
-            updateHeaderStats();
-            close();
-
-            const changeDetails = [];
-            if (oldTeamIndex !== newTeamIndex) changeDetails.push(`team → ${state.teams[newTeamIndex].name}`);
-            if (oldPrice !== newPrice) changeDetails.push(`price → ₹${newPrice} Cr`);
-            showToast(`${asset.name} updated: ${changeDetails.join(', ')}`, 'success');
-        };
-
-        cancelBtn.addEventListener('click', close);
-        confirmBtn.addEventListener('click', handleSave);
-    }
-
-    function markUnsold() {
-        if (!state.unsoldAssets) state.unsoldAssets = [];
-        if (state.auctionAssetId !== null && !state.unsoldAssets.includes(state.auctionAssetId)) {
-            state.unsoldAssets.push(state.auctionAssetId);
-        }
-
-        const lastAssetId = state.auctionAssetId;
-        state.auctionAssetId = null;
-        state.currentBid = 0;
-        state.selectedTeamIndex = null;
-
-        let nextAssetId = null;
-        if (lastAssetId !== null) {
-            for (let i = lastAssetId; i < ASSETS.length; i++) {
-                const checkId = ASSETS[i].id;
-                if (!isAssetSold(checkId) && !isAssetUnsold(checkId)) {
-                    nextAssetId = checkId;
-                    break;
-                }
-            }
-        }
-
-        showToast('Asset marked as unsold', 'info');
-
-        if (nextAssetId !== null) {
-            renderAuctionSidebar();
-            saveState();
-            startAuction(nextAssetId);
-        } else {
-            document.getElementById('auction-active-state').style.display = 'none';
-            document.getElementById('auction-empty-state').style.display = '';
-            renderAuctionSidebar();
-            saveState();
-        }
-    }
-
-    function cancelAuction() {
-        state.auctionAssetId = null;
-        state.currentBid = 0;
-        state.selectedTeamIndex = null;
-
-        document.getElementById('auction-active-state').style.display = 'none';
-        document.getElementById('auction-empty-state').style.display = '';
-
-        renderAuctionSidebar();
-        saveState();
-    }
-
-    // ===========================
-    // ASSETS VIEW
-    // ===========================
-    let globalVerticalsVisible = true;
-
-    function renderAssetsView() {
-        const grid = document.getElementById('assets-grid-view');
-        const verticalFilter = document.getElementById('asset-vertical-filter').value;
-        const statusFilter = document.getElementById('asset-status-filter').value;
-
-        let filtered = ASSETS;
-        if (verticalFilter !== 'all') filtered = filtered.filter(a => a.vertical === verticalFilter);
-        if (statusFilter === 'available') filtered = filtered.filter(a => !isAssetSold(a.id));
-        if (statusFilter === 'sold') filtered = filtered.filter(a => isAssetSold(a.id));
-
-        grid.innerHTML = '';
-
-        filtered.forEach(asset => {
-            const sold = isAssetSold(asset.id);
-            const unsold = isAssetUnsold(asset.id);
-            const sale = getSaleForAsset(asset.id);
-
-            const card = document.createElement('div');
-            card.className = `asset-card${sold ? ' sold' : ''}${unsold && !sold ? ' unsold' : ''}`;
-
-            let footerHTML = `<span class="ac-base-price">₹${asset.basePrice} Cr</span>`;
-            if (sold) {
-                const team = state.teams[sale.teamIndex];
-                footerHTML += `
-                    <div class="ac-sold-info">
-                        <div class="ac-sold-team" style="color: ${team.color}">${team.name}</div>
-                        <div class="ac-sold-price">₹${sale.price} Cr</div>
-                    </div>
-                `;
-            } else if (unsold) {
-                footerHTML += `
-                    <div class="ac-sold-info">
-                        <div class="ac-sold-team" style="color: var(--text-muted); background: rgba(255,255,255,0.1); padding: 0.2rem 0.5rem; border-radius: 4px;">UNSOLD</div>
-                    </div>
-                `;
-            }
-
-            card.innerHTML = `
-                <div class="ac-header">
-                    <span class="ac-id">#${asset.id}</span>
-                    <span class="ac-category cat-${asset.category}">Cat ${asset.category}</span>
-                    <span class="ac-vertical" style="display: ${globalVerticalsVisible ? 'inline-block' : 'none'};">${asset.vertical}</span>
-                </div>
-                <div class="ac-name" style="${unsold && !sold ? 'opacity:0.6;' : ''}">${asset.fullName}</div>
-                <div class="ac-footer">${footerHTML}</div>
-            `;
-
-            grid.appendChild(card);
-        });
-
-        const toggleBtn = document.getElementById('btn-global-toggle-verticals');
-        if (toggleBtn) {
-            toggleBtn.title = globalVerticalsVisible ? 'Hide Verticals' : 'Show Verticals';
-            toggleBtn.innerHTML = globalVerticalsVisible ? '👁️' : '🙈';
-        }
-    }
-
-    // ===========================
-    // TEAMS VIEW
-    // ===========================
-    // Global UI state for expanding team portfolios
-    let globalAssetsExpanded = false;
-    let globalPortfoliosVisible = false;
-
-    function renderTeamsView() {
-        const grid = document.getElementById('teams-grid-view');
-        grid.innerHTML = '';
-
-        state.teams.forEach((team, idx) => {
-            const teamAssets = getTeamAssets(idx);
-            const spent = getTeamSpent(idx);
-            const assetCount = teamAssets.length;
-
-            const card = document.createElement('div');
-            card.className = 'team-card';
-
-            let assetsListHTML = '';
-
-            if (teamAssets.length > 0) {
-                assetsListHTML = `<div class="tc-assets-list" style="display: ${globalAssetsExpanded ? 'block' : 'none'}; margin-top: 0.5rem;">`;
-                teamAssets.forEach(s => {
-                    const a = getAssetById(s.assetId);
-                    assetsListHTML += `
-                        <div class="tc-asset-row" style="flex-direction: column; align-items: flex-start; gap: 0.2rem; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                            <div style="width: 100%; display: flex; justify-content: space-between;">
-                                <span class="tc-asset-name" style="font-weight: 600;">Auction ID: #${a.id} | ${a.name}</span>
-                                <span class="tc-asset-price" style="font-size: 0.9rem; color: var(--accent-gold);">Sold: ₹${s.price} Cr</span>
-                            </div>
-                            <div style="width: 100%; display: flex; justify-content: space-between;">
-                                <span style="font-size: 0.75rem; color: var(--text-muted);">Base: ₹${a.basePrice} Cr</span>
-                            </div>
-                        </div>
-                    `;
-                });
-                assetsListHTML += '</div>';
-            } else {
-                assetsListHTML = `<div class="tc-empty" style="display: ${globalAssetsExpanded ? 'block' : 'none'}; margin-top: 0.5rem;">No assets purchased yet</div>`;
-            }
-
-            card.innerHTML = `
-                <div class="tc-header">
-                    <div class="tc-name-section">
-                        <div class="tc-color-dot" style="background: ${team.color}"></div>
-                        <span class="tc-name" data-team="${idx}">${team.name}</span>
-                        <button class="tc-edit-btn" data-team="${idx}">✏️</button>
-                    </div>
-                    <div class="tc-budget">
-                        <div class="tc-budget-label">Budget Remaining</div>
-                        <div class="tc-budget-value ${team.budget < 20 ? 'low' : ''}">₹${team.budget.toFixed(1)} Cr</div>
-                    </div>
-                </div>
-                <div class="tc-stats">
-                    <div class="tc-stat">
-                        <span class="tc-stat-label">Assets</span>
-                        <span class="tc-stat-val">${assetCount}</span>
-                    </div>
-                    <div class="tc-stat">
-                        <span class="tc-stat-label">Invested</span>
-                        <span class="tc-stat-val">₹${spent.toFixed(1)} Cr</span>
-                    </div>
-                    <div class="tc-stat">
-                        <span class="tc-stat-label">Budget Used</span>
-                        <span class="tc-stat-val">${((spent / INITIAL_CAPITAL) * 100).toFixed(0)}%</span>
-                    </div>
-                </div>
-                ${assetsListHTML}
-            `;
-
-            grid.appendChild(card);
-        });
-
-        // Attach edit handlers
-        document.querySelectorAll('.tc-edit-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const teamIdx = parseInt(e.target.dataset.team);
-                startTeamNameEdit(teamIdx, e.target);
-            });
-        });
-
-        // Update global toggle button text
-        const globalBtn = document.getElementById('btn-global-toggle-assets');
-        if (globalBtn) {
-            globalBtn.textContent = globalAssetsExpanded ? '▲ Hide All Assets' : '▼ Show All Assets';
-        }
-    }
-
-    function startTeamNameEdit(teamIdx, btnElement) {
-        const nameSpan = document.querySelector(`.tc-name[data-team="${teamIdx}"]`);
-        const currentName = state.teams[teamIdx].name;
-        const parent = nameSpan.parentElement;
-
-        // Replace name + button with input
-        const editDiv = document.createElement('div');
-        editDiv.className = 'tc-name-edit-inline';
-        editDiv.innerHTML = `
-                        <input type= "text" value = "${currentName}" maxlength = "30" >
-            <button class="save-name">✓</button>
-            <button class="cancel-name">✕</button>
-                    `;
-
-        nameSpan.style.display = 'none';
-        btnElement.style.display = 'none';
-        parent.appendChild(editDiv);
-
-        const input = editDiv.querySelector('input');
-        input.focus();
-        input.select();
-
-        const finish = (save) => {
-            if (save) {
-                const newName = input.value.trim() || currentName;
-                state.teams[teamIdx].name = newName;
-                saveState();
-            }
-            renderTeamsView();
-        };
-
-        editDiv.querySelector('.save-name').addEventListener('click', () => finish(true));
-        editDiv.querySelector('.cancel-name').addEventListener('click', () => finish(false));
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') finish(true);
-            if (e.key === 'Escape') finish(false);
-        });
-    }
-
-    // ===========================
-    // RESULTS VIEW
-    // ===========================
-    function renderResultsView() {
-        renderSalesLog();
-        updateDisasterUI();
-        if (state.disasterApplied) {
-            renderPostDisasterResults();
-        }
-    }
-
-    function renderSalesLog() {
-        const container = document.getElementById('sales-log-table');
-        if (state.sales.length === 0) {
-            container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No sales recorded yet</p>';
-            return;
-        }
-
-        const sortedSales = [...state.sales].sort((a, b) => a.order - b.order);
-
-        let html = `
-                        <table>
-                <thead>
-                    <tr>
-                        <th>Order</th>
-                        <th>Asset ID</th>
-                        <th>Asset Name</th>
-                        <th>Category</th>
-                        <th>Base Price</th>
-                        <th>Sold Price</th>
-                        <th>Premium</th>
-                        <th>Team</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-
-        sortedSales.forEach(sale => {
-            const asset = getAssetById(sale.assetId);
-            const team = state.teams[sale.teamIndex];
-            const premium = ((sale.price - asset.basePrice) / asset.basePrice * 100).toFixed(0);
-
-            html += `
-                <tr>
-                    <td>${sale.order}</td>
-                    <td>#${asset.originalId}</td>
-                    <td style="font-family: 'Outfit'; font-weight: 500;">${asset.name}</td>
-                    <td>${asset.category}</td>
-                    <td>₹${asset.basePrice} Cr</td>
-                    <td style="color: var(--accent-gold);">₹${sale.price} Cr</td>
-                    <td style="color: ${premium > 0 ? 'var(--accent-emerald)' : 'var(--text-muted)'};">${premium > 0 ? '+' : ''}${premium}%</td>
-                    <td style="color: ${team.color}; font-family: 'Outfit'; font-weight: 600;">${team.name}</td>
-                </tr>
-            `;
-        });
-
-        html += '</tbody></table> ';
-        container.innerHTML = html;
-    }
-
-    // ===========================
-    // DISASTER
-    // ===========================
-    let selectedDisasterCode = null;
-
-    function updateDisasterUI() {
-        document.querySelectorAll('.disaster-btn').forEach(btn => {
-            btn.classList.toggle('selected', btn.dataset.code === selectedDisasterCode);
-        });
-
-        const applyBtn = document.getElementById('btn-apply-disaster');
-        const resetBtn = document.getElementById('btn-reset-disaster');
-        const infoDiv = document.getElementById('disaster-info');
-
-        if (state.disasterApplied) {
-            applyBtn.style.display = 'none';
-            resetBtn.style.display = 'inline-block';
-            infoDiv.innerHTML = `<div class="disaster-applied-banner">⚠️ Disaster ${state.disasterCode} has been applied</div>`;
-            // Disable buttons
-            document.querySelectorAll('.disaster-btn').forEach(btn => {
-                btn.style.pointerEvents = 'none';
-                btn.style.opacity = btn.dataset.code === state.disasterCode ? '1' : '0.3';
-            });
-        } else if (selectedDisasterCode) {
-            applyBtn.disabled = false;
-            applyBtn.style.display = 'inline-block';
-            resetBtn.style.display = 'none';
-            const d = DISASTER_TABLE[selectedDisasterCode];
-            infoDiv.innerHTML = `
-                <table>
-                    <tr><th>Category</th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
-                    <tr>
-                        <td>Impact</td>
-                        <td class="${d.A > 1 ? 'val-up' : d.A < 1 ? 'val-down' : 'val-neutral'}">${d.A > 1 ? '+20%' : d.A < 1 ? '−20%' : '0%'}</td>
-                        <td class="${d.B > 1 ? 'val-up' : d.B < 1 ? 'val-down' : 'val-neutral'}">${d.B > 1 ? '+20%' : d.B < 1 ? '−20%' : '0%'}</td>
-                        <td class="${d.C > 1 ? 'val-up' : d.C < 1 ? 'val-down' : 'val-neutral'}">${d.C > 1 ? '+20%' : d.C < 1 ? '−20%' : '0%'}</td>
-                        <td class="${d.D > 1 ? 'val-up' : d.D < 1 ? 'val-down' : 'val-neutral'}">${d.D > 1 ? '+20%' : d.D < 1 ? '−20%' : '0%'}</td>
-                    </tr>
-                </table>
-            `;
-            document.querySelectorAll('.disaster-btn').forEach(btn => {
-                btn.style.pointerEvents = '';
-                btn.style.opacity = '';
-            });
-        } else {
-            applyBtn.disabled = true;
-            applyBtn.style.display = 'inline-block';
-            resetBtn.style.display = 'none';
-            infoDiv.innerHTML = '<p>Select a disaster code to apply post-auction impact</p>';
-            document.querySelectorAll('.disaster-btn').forEach(btn => {
-                btn.style.pointerEvents = '';
-                btn.style.opacity = '';
-            });
-        }
-    }
-
-    function applyDisaster() {
-        if (!selectedDisasterCode) return;
-
-        showCustomModal(
-            '⚠️ Apply Disaster',
-            `Are you sure you want to apply Disaster <b style="color:var(--accent-gold); font-size:1.2rem;">${selectedDisasterCode}</b>?<br>This will permanently recalculate all portfolio values.`,
-            false,
-            'Yes, Apply Disaster',
-            true, // isDanger
-            () => {
-                state.disasterCode = selectedDisasterCode;
-                state.disasterApplied = true;
-                saveState();
-
-                updateDisasterUI();
-                renderPostDisasterResults();
-                // Assuming globalPortfoliosVisible is defined elsewhere and its default is now false
-                document.getElementById('post-disaster-results-body').style.display = 'none'; // Always hide initially after disaster application
-
-                const portfoliosToggleBtn = document.getElementById('btn-global-toggle-portfolios');
-                if (portfoliosToggleBtn) {
-                    // If globalPortfoliosVisible is false by default, this will correctly show '▶ Show'
-                    portfoliosToggleBtn.title = 'Show Portfolios';
-                    portfoliosToggleBtn.innerHTML = '▶ Show';
-                }
-
-                showToast(`Disaster ${selectedDisasterCode} applied!`, 'error');
-            }
-        );
-    }
-
-    function resetDisaster() {
-        showCustomModal(
-            '↺ Reset Disaster',
-            'Reset disaster? This will undo the portfolio recalculations and restore prior values.',
-            false,
-            'Yes, Reset',
-            false,
-            () => {
-                state.disasterCode = null;
-                state.disasterApplied = false;
-                // Keep selectedDisasterCode so they can quickly re-apply it
-                saveState();
-
-                document.getElementById('post-disaster-results-body').style.display = 'none';
-                updateDisasterUI();
-
-                showToast('Disaster reset', 'info');
-            }
-        );
-    }
-
-    function renderPostDisasterResults() {
-        const container = document.getElementById('results-table-container');
-        if (!state.disasterApplied) { container.innerHTML = ''; return; }
-
-        let html = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Team</th>
-                        <th>Assets</th>
-                        <th>Total Invested</th>
-                        <th>Post-Disaster Value</th>
-                        <th>ROI</th>
-                        <th>V1</th><th>V2</th><th>V3</th><th>V4</th>
-                        <th>Verticals</th>
-                        <th>Max Exposure</th>
-                        <th>Bus. Strength</th>
-                        <th>Bonus</th>
-                        <th>Org Score (50)</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-
-        state.teams.forEach((team, idx) => {
-            const teamSales = getTeamAssets(idx);
-            const totalInvested = teamSales.reduce((s, sale) => s + sale.price, 0);
-
-            if (teamSales.length === 0) {
-                html += `<tr><td style="color: ${team.color}; font-family:'Outfit'; font-weight:600;">${team.name}</td><td colspan="13" style="color: var(--text-muted);">No assets</td></tr>`;
-                return;
-            }
-
-            let postValue = 0;
-            const categoryInv = { A: 0, B: 0, C: 0, D: 0 };
-            const verticalPresence = { V1: 0, V2: 0, V3: 0, V4: 0 };
-
-            teamSales.forEach(sale => {
-                const asset = getAssetById(sale.assetId);
-                const multiplier = getDisasterMultiplier(asset.category, state.disasterCode);
-                postValue += sale.price * multiplier;
-                categoryInv[asset.category] += sale.price;
-                verticalPresence[asset.vertical] = 1;
-            });
-
-            const rawRoi = totalInvested > 0 ? (postValue - totalInvested) / totalInvested : 0;
-            const rawMaxExposure = totalInvested > 0 ? Math.max(...Object.values(categoryInv)) / totalInvested : 0;
-
-            // Fix floating point inaccuracies (e.g. 0.450000000000001)
-            const roi = Math.round(rawRoi * 100000) / 100000;
-            const maxExposure = Math.round(rawMaxExposure * 100000) / 100000;
-
-            const verticalCount = Object.values(verticalPresence).reduce((a, b) => a + b, 0);
-
-            // Scoring
-            const verticalScore = (verticalCount / 4) * 15;
-            const riskScore = maxExposure <= 0.45 ? 15 : Math.round(15 * Math.pow((1 - maxExposure) / 0.55, 2) * 10) / 10;
-            const roiScore = Math.round(Math.max(0, Math.min(10, roi * 50)) * 10) / 10;
-
-            const businessStrength = verticalScore + riskScore + roiScore;
-
-            const extraAsset = teamSales.length >= 5 ? 1 : 0;
-            const roiCondition = roi >= 0.08 ? 1 : 0;
-            const exposureCondition = maxExposure <= 0.45 ? 1 : 0;
-            const conditions = (verticalCount === 4 && extraAsset ? 1 : 0) + roiCondition + exposureCondition;
-
-            let bonus = 0;
-            if (conditions === 3) bonus = 10;
-            else if (conditions === 2) bonus = 6;
-            else if (conditions === 1) bonus = 3;
-
-            const orgScore = businessStrength + bonus;
-
-            html += `
-                <tr>
-                    <td style="color: ${team.color}; font-family:'Outfit'; font-weight:600;">${team.name}</td>
-                    <td>${teamSales.length}</td>
-                    <td>₹${totalInvested.toFixed(1)} Cr</td>
-                    <td>₹${postValue.toFixed(1)} Cr</td>
-                    <td class="${roi >= 0 ? 'val-up' : 'val-down'}">${(roi * 100).toFixed(1)}%</td>
-                    <td>${verticalPresence.V1 ? '✓' : '✕'}</td>
-                    <td>${verticalPresence.V2 ? '✓' : '✕'}</td>
-                    <td>${verticalPresence.V3 ? '✓' : '✕'}</td>
-                    <td>${verticalPresence.V4 ? '✓' : '✕'}</td>
-                    <td>${verticalCount}/4</td>
-                    <td class="${maxExposure <= 0.45 ? 'val-up' : 'val-down'}">${(maxExposure * 100).toFixed(0)}%</td>
-                    <td>${businessStrength.toFixed(1)}</td>
-                    <td>${bonus}</td>
-                    <td style="color: var(--accent-gold); font-size: 1.1rem; font-weight:700;">${orgScore.toFixed(1)}</td>
-                </tr>
-            `;
-        });
-
-        html += '</tbody></table>';
-        container.innerHTML = html;
-    }
-
-    // ===========================
-    // CSV EXPORT
-    // ===========================
-    function downloadCSV(filename, csvContent) {
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = filename;
-        link.click();
-        URL.revokeObjectURL(link.href);
-    }
-
-    function exportMasterSheet() {
-        if (state.sales.length === 0) {
-            showToast('No sales data to export', 'error');
-            return;
-        }
-
-        let csv = '=== BEFORE DISASTER (AUCTION LOG) ===\n';
-        csv += 'Sale Order,Auction ID,Asset ID,Asset Name,Category,Vertical,Base Price (Cr),Sold Price (Cr),Premium (%),Team\n';
-
-        const sorted = [...state.sales].sort((a, b) => a.order - b.order);
-        sorted.forEach(sale => {
-            const asset = getAssetById(sale.assetId);
-            const team = state.teams[sale.teamIndex];
-            const premium = ((sale.price - asset.basePrice) / asset.basePrice * 100).toFixed(1);
-            csv += `${sale.order},${asset.id},${asset.originalId},"${asset.fullName}",${asset.category},${asset.vertical},${asset.basePrice},${sale.price},${premium},"${team.name}"\n`;
-        });
-
-        // Add summary
-        csv += '\n\n=== TEAM SUMMARY (PRE-DISASTER) ===\n';
-        csv += 'Team,Assets Bought,Total Invested (Cr),Budget Remaining (Cr)\n';
-        state.teams.forEach((team, idx) => {
-            const teamSales = getTeamAssets(idx);
-            const spent = getTeamSpent(idx);
-            csv += `"${team.name}",${teamSales.length},${spent.toFixed(1)},${team.budget.toFixed(1)}\n`;
-        });
-
-        // If disaster applied, add post-disaster data
-        if (state.disasterApplied) {
-            csv += `\n\n=== AFTER DISASTER: CODE ${state.disasterCode} ===\n`;
-            csv += 'Sale Order,Auction ID,Asset ID,Asset Name,Category,Team,Purchased For (Cr),Multiplier,Post-Disaster Value (Cr)\n';
-
-            sorted.forEach(sale => {
-                const asset = getAssetById(sale.assetId);
-                const team = state.teams[sale.teamIndex];
-                const multiplier = getDisasterMultiplier(asset.category, state.disasterCode);
-                const newValue = sale.price * multiplier;
-                csv += `${sale.order},${asset.id},${asset.originalId},"${asset.fullName}",${asset.category},"${team.name}",${sale.price},${multiplier}x,${newValue.toFixed(1)}\n`;
-            });
-
-            csv += '\n\n=== TEAM SUMMARY (POST-DISASTER) ===\n';
-            csv += 'Team,Total Invested (Cr),Post-Disaster Value (Cr),Profit/Loss (Cr),ROI (%),Vertical Count,Max Exposure (%),Business Strength,Bonus,Organizer Score\n';
-
-            state.teams.forEach((team, idx) => {
-                const teamSales = getTeamAssets(idx);
-                const totalInvested = teamSales.reduce((s, sale) => s + sale.price, 0);
-                if (teamSales.length === 0) return;
-
-                let postValue = 0;
-                const catInv = { A: 0, B: 0, C: 0, D: 0 };
-                const vertPres = { V1: 0, V2: 0, V3: 0, V4: 0 };
-
-                teamSales.forEach(sale => {
-                    const asset = getAssetById(sale.assetId);
-                    postValue += sale.price * getDisasterMultiplier(asset.category, state.disasterCode);
-                    catInv[asset.category] += sale.price;
-                    vertPres[asset.vertical] = 1;
-                });
-
-                const profitLoss = postValue - totalInvested;
-                const rawRoi = totalInvested > 0 ? profitLoss / totalInvested : 0;
-                const rawMaxExp = totalInvested > 0 ? Math.max(...Object.values(catInv)) / totalInvested : 0;
-                const vCount = Object.values(vertPres).reduce((a, b) => a + b, 0);
-
-                const roi = Math.round(rawRoi * 100000) / 100000;
-                const maxExp = Math.round(rawMaxExp * 100000) / 100000;
-
-                const vScore = (vCount / 4) * 15;
-                const rScore = maxExp <= 0.45 ? 15 : Math.round(15 * Math.pow((1 - maxExp) / 0.55, 2) * 10) / 10;
-                const roiScore = Math.round(Math.max(0, Math.min(10, roi * 50)) * 10) / 10;
-                const bStr = vScore + rScore + roiScore;
-
-                const extraA = teamSales.length >= 5 ? 1 : 0;
-                const roiC = roi >= 0.08 ? 1 : 0;
-                const expC = maxExp <= 0.45 ? 1 : 0;
-                const conds = (vCount === 4 && extraA ? 1 : 0) + roiC + expC;
-                let bonus = conds === 3 ? 10 : conds === 2 ? 6 : conds === 1 ? 3 : 0;
-
-                csv += `"${team.name}",${totalInvested.toFixed(1)},${postValue.toFixed(1)},${profitLoss.toFixed(1)},${(roi * 100).toFixed(1)},${vCount},${(maxExp * 100).toFixed(0)},${bStr.toFixed(1)},${bonus},${(bStr + bonus).toFixed(1)}\n`;
-            });
-        }
-
-        downloadCSV('Bid-Crusade_Master_Sheet.csv', csv);
-        showToast('Master sheet downloaded!', 'success');
-    }
-
-    // ===========================
-    // TEAM PDF GENERATION
-    // ===========================
-    function exportTeamPDFs() {
-        if (state.sales.length === 0) {
-            showToast('No sales data to export', 'error');
-            return;
-        }
-        if (!state.disasterApplied) {
-            showToast('Apply disaster first to generate score PDFs', 'error');
-            return;
-        }
-
-        const { jsPDF } = window.jspdf;
-
-        state.teams.forEach((team, idx) => {
-            const teamSales = getTeamAssets(idx);
-            if (teamSales.length === 0) return;
-
-            const doc = new jsPDF();
-            const pageWidth = doc.internal.pageSize.getWidth();
-
-            // Title
-            doc.setFontSize(20);
-            doc.setFont('helvetica', 'bold');
-            doc.text('BID CRUSADES', pageWidth / 2, 20, { align: 'center' });
-            doc.setFontSize(14);
-            doc.text('Team Summary Report', pageWidth / 2, 28, { align: 'center' });
-
-            // Team Name
-            doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
-            doc.text(team.name, pageWidth / 2, 40, { align: 'center' });
-
-            // Budget Info
-            const totalSpent = teamSales.reduce((s, sale) => s + sale.price, 0);
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Initial Budget: 100 Cr`, 14, 52);
-            doc.text(`Total Invested: ${totalSpent.toFixed(1)} Cr`, 14, 58);
-            doc.text(`Leftover Budget: ${team.budget.toFixed(1)} Cr`, 14, 64);
-            doc.text(`Assets Acquired: ${teamSales.length}`, 14, 70);
-            doc.text(`Disaster Code: ${state.disasterCode}`, 14, 76);
-
-            // Assets Table
-            doc.setFontSize(13);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Assets Acquired', 14, 88);
-
-            const assetRows = teamSales.map(sale => {
-                const asset = getAssetById(sale.assetId);
-                const multiplier = getDisasterMultiplier(asset.category, state.disasterCode);
-                const postVal = sale.price * multiplier;
-                return [
-                    asset.id,
-                    asset.fullName,
-                    asset.category,
-                    asset.vertical,
-                    `${sale.price} Cr`,
-                    `${multiplier}x`,
-                    `${postVal.toFixed(1)} Cr`
-                ];
-            });
-
-            doc.autoTable({
-                startY: 92,
-                head: [['#', 'Asset Name', 'Cat', 'Vertical', 'Bought For', 'Multiplier', 'Post-Disaster']],
-                body: assetRows,
-                styles: { fontSize: 8, cellPadding: 2 },
-                headStyles: { fillColor: [41, 50, 65], textColor: 255, fontStyle: 'bold' },
-                alternateRowStyles: { fillColor: [240, 240, 240] },
-                margin: { left: 14, right: 14 }
-            });
-
-            let yPos = doc.lastAutoTable.finalY + 15;
-
-            // Score Breakdown
-            // Calculate scores
-            let postValue = 0;
-            const categoryInv = { A: 0, B: 0, C: 0, D: 0 };
-            const verticalPresence = { V1: 0, V2: 0, V3: 0, V4: 0 };
-
-            teamSales.forEach(sale => {
-                const asset = getAssetById(sale.assetId);
-                const multiplier = getDisasterMultiplier(asset.category, state.disasterCode);
-                postValue += sale.price * multiplier;
-                categoryInv[asset.category] += sale.price;
-                verticalPresence[asset.vertical] = 1;
-            });
-
-            const rawRoi = totalSpent > 0 ? (postValue - totalSpent) / totalSpent : 0;
-            const rawMaxExposure = totalSpent > 0 ? Math.max(...Object.values(categoryInv)) / totalSpent : 0;
-            const roi = Math.round(rawRoi * 100000) / 100000;
-            const maxExposure = Math.round(rawMaxExposure * 100000) / 100000;
-            const verticalCount = Object.values(verticalPresence).reduce((a, b) => a + b, 0);
-
-            const verticalScore = (verticalCount / 4) * 15;
-            const riskScore = maxExposure <= 0.45 ? 15 : Math.round(15 * Math.pow((1 - maxExposure) / 0.55, 2) * 10) / 10;
-            const roiScore = Math.round(Math.max(0, Math.min(10, roi * 50)) * 10) / 10;
-
-            const businessStrength = verticalScore + riskScore + roiScore;
-
-            const extraAsset = teamSales.length >= 5 ? 1 : 0;
-            const roiCondition = roi >= 0.08 ? 1 : 0;
-            const exposureCondition = maxExposure <= 0.45 ? 1 : 0;
-            const conditions = (verticalCount === 4 && extraAsset ? 1 : 0) + roiCondition + exposureCondition;
-            let bonus = conditions === 3 ? 10 : conditions === 2 ? 6 : conditions === 1 ? 3 : 0;
-
-            const orgScore = businessStrength + bonus;
-
-            // Check if we need a new page
-            if (yPos > 220) {
-                doc.addPage();
-                yPos = 20;
-            }
-
-            doc.setFontSize(13);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Score Breakdown (Out of 50)', 14, yPos);
-
-            // Portfolio summary
-            const summaryRows = [
-                ['Post-Disaster Portfolio Value', `${postValue.toFixed(1)} Cr`],
-                ['Profit / Loss', `${(postValue - totalSpent).toFixed(1)} Cr`],
-                ['ROI', `${(roi * 100).toFixed(1)}%`],
-                ['Category Exposure A', `${(totalSpent > 0 ? categoryInv.A / totalSpent * 100 : 0).toFixed(1)}%`],
-                ['Category Exposure B', `${(totalSpent > 0 ? categoryInv.B / totalSpent * 100 : 0).toFixed(1)}%`],
-                ['Category Exposure C', `${(totalSpent > 0 ? categoryInv.C / totalSpent * 100 : 0).toFixed(1)}%`],
-                ['Category Exposure D', `${(totalSpent > 0 ? categoryInv.D / totalSpent * 100 : 0).toFixed(1)}%`],
-                ['Max Exposure', `${(maxExposure * 100).toFixed(1)}%`],
-            ];
-
-            doc.autoTable({
-                startY: yPos + 4,
-                head: [['Metric', 'Value']],
-                body: summaryRows,
-                styles: { fontSize: 9, cellPadding: 2 },
-                headStyles: { fillColor: [41, 50, 65], textColor: 255, fontStyle: 'bold' },
-                columnStyles: { 0: { fontStyle: 'bold' } },
-                margin: { left: 14, right: 14 }
-            });
-
-            yPos = doc.lastAutoTable.finalY + 10;
-
-            // Score table
-            const scoreRows = [
-                ['A. Vertical Coverage (15)', `${verticalCount}/4 verticals covered`, verticalScore.toFixed(1)],
-                ['B. Risk Discipline (15)', `Max Exposure: ${(maxExposure * 100).toFixed(1)}%`, riskScore.toFixed(1)],
-                ['C. ROI Performance (10)', `ROI: ${(roi * 100).toFixed(1)}%`, roiScore.toFixed(0)],
-                ['Business Strength (40)', '', businessStrength.toFixed(1)],
-                ['', '', ''],
-                ['Bonus Condition 1: 4 Verticals + 5 Assets', verticalCount === 4 && extraAsset ? 'YES' : 'NO', ''],
-                ['Bonus Condition 2: ROI >= 8%', roiCondition ? 'YES' : 'NO', ''],
-                ['Bonus Condition 3: Exposure <= 45%', exposureCondition ? 'YES' : 'NO', ''],
-                ['Bonus Score (10)', `${conditions}/3 conditions met`, bonus.toFixed(0)],
-                ['', '', ''],
-                ['ORGANIZER TOTAL (50)', '', orgScore.toFixed(1)],
-            ];
-
-            doc.autoTable({
-                startY: yPos,
-                head: [['Component', 'Detail', 'Score']],
-                body: scoreRows,
-                styles: { fontSize: 9, cellPadding: 2 },
-                headStyles: { fillColor: [41, 50, 65], textColor: 255, fontStyle: 'bold' },
-                columnStyles: { 0: { fontStyle: 'bold' } },
-                margin: { left: 14, right: 14 },
-                didParseCell: function (data) {
-                    if (data.section === 'body') {
-                        // Highlight total row
-                        if (data.row.index === 3 || data.row.index === 10) {
-                            data.cell.styles.fillColor = [230, 240, 255];
-                            data.cell.styles.fontStyle = 'bold';
-                        }
-                        if (data.row.index === 10) {
-                            data.cell.styles.fontSize = 11;
-                        }
+        }, { passive: false });
+
+        // DYNAMIC PAGE NUMBER TRACKING ON VERTICAL SCROLL
+        viewportWrapper.addEventListener('scroll', () => {
+            if (!ps.pdfDoc) return;
+            const container = document.getElementById(`${type}-canvas-container`);
+            if (!container) return;
+
+            const canvases = container.querySelectorAll('.pdf-page-canvas');
+            const wrapperRect = viewportWrapper.getBoundingClientRect();
+
+            canvases.forEach((canvas, index) => {
+                const rect = canvas.getBoundingClientRect();
+                if (rect.top <= wrapperRect.top + 100 && rect.bottom >= wrapperRect.top + 50) {
+                    const currentPage = index + 1;
+                    if (ps.pageNum !== currentPage) {
+                        ps.pageNum = currentPage;
+                        const pageInput = document.getElementById(`${type}-page-num`);
+                        if (pageInput) pageInput.value = currentPage;
                     }
                 }
             });
-
-            // Footer
-            const finalY = doc.lastAutoTable.finalY + 10;
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'italic');
-            doc.text('Generated by Bid Crusades Scoring System', pageWidth / 2, finalY, { align: 'center' });
-
-            doc.save(`${team.name.replace(/\s+/g, '_')}_Summary.pdf`);
         });
+    }
 
-        showToast('Team PDFs downloaded!', 'success');
+    function jumpToPDFPage(type, targetPage) {
+        const ps = pdfState[type];
+        if (!ps.pdfDoc || targetPage < 1 || targetPage > ps.pdfDoc.numPages) return;
+        ps.pageNum = targetPage;
+        document.getElementById(`${type}-page-num`).value = targetPage;
+
+        const targetCanvas = document.getElementById(`${type}-page-canvas-${targetPage}`);
+        if (targetCanvas) {
+            targetCanvas.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     }
 
     // ===========================
-    // EVENT LISTENERS
+    // THEME ENGINE (LIGHT: WHITE & ORANGE / DARK: DARK GREY & ORANGE)
     // ===========================
-    function attachEventListeners() {
-        // Navigation
+    function initTheme() {
+        const savedTheme = localStorage.getItem('bid_biz_theme_pref') || 'light';
+        setTheme(savedTheme);
+    }
+
+    function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('bid_biz_theme_pref', theme);
+        const toggleBtn = document.getElementById('btn-theme-toggle');
+        if (toggleBtn) {
+            if (theme === 'dark') {
+                toggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i> Light';
+            } else {
+                toggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i> Dark';
+            }
+        }
+    }
+
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        setTheme(nextTheme);
+        showToast(`<i class="fa-solid fa-palette"></i> Switched to ${nextTheme === 'dark' ? 'Dark Grey' : 'White'} & Orange Theme`);
+    }
+
+    // ===========================
+    // EVENT LISTENERS & ACTION HANDLERS
+    // ===========================
+    function setupEventListeners() {
+        // Theme Toggle Button
+        const themeBtn = document.getElementById('btn-theme-toggle');
+        if (themeBtn) {
+            themeBtn.addEventListener('click', toggleTheme);
+        }
+
+        // Phase Dropdown Toggle in Navbar
+        const phaseTrigger = document.getElementById('phase-badge-trigger');
+        const phaseMenu = document.getElementById('header-phase-dropdown-menu');
+
+        if (phaseTrigger && phaseMenu) {
+            phaseTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                phaseMenu.classList.toggle('show');
+            });
+
+            document.addEventListener('click', () => {
+                phaseMenu.classList.remove('show');
+            });
+        }
+
+        // Enable System Notifications Button
+        const btnNotif = document.getElementById('btn-enable-notifications');
+        if (btnNotif) {
+            btnNotif.addEventListener('click', () => requestNotificationPermission(false));
+            updateNotificationButtonUI();
+        }
+
+        // Admin Passcode Modal Submit
+        document.getElementById('admin-passcode-submit').addEventListener('click', () => {
+            const input = document.getElementById('admin-passcode-input').value;
+            if (input === DEFAULT_PASSCODE || input === '') {
+                document.getElementById('admin-passcode-modal').style.display = 'none';
+                document.getElementById('admin-passcode-input').value = '';
+                setRole('admin');
+                switchView('admin');
+                showToast('<i class="fa-solid fa-bolt"></i> Logged in as Admin');
+            } else {
+                showToast('Invalid Passcode!', true);
+            }
+        });
+
+        document.getElementById('admin-passcode-cancel').addEventListener('click', () => {
+            document.getElementById('admin-passcode-modal').style.display = 'none';
+            document.getElementById('admin-passcode-input').value = '';
+        });
+
+        document.getElementById('btn-admin-logout').addEventListener('click', () => {
+            setRole('participant');
+            showToast('Logged out of Admin Mode');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') || (e.shiftKey && e.key.toLowerCase() === 'a' && document.activeElement.tagName !== 'INPUT')) {
+                e.preventDefault();
+                document.getElementById('admin-passcode-modal').style.display = 'flex';
+                document.getElementById('admin-passcode-input').focus();
+            }
+        });
+
+        const footerTrigger = document.getElementById('footer-admin-trigger');
+        if (footerTrigger) {
+            footerTrigger.addEventListener('click', () => {
+                document.getElementById('admin-passcode-modal').style.display = 'flex';
+                document.getElementById('admin-passcode-input').focus();
+            });
+        }
+
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', () => switchView(btn.dataset.view));
         });
 
-        // Auction sidebar filters
-        document.querySelectorAll('.asset-filter-bar .filter-btn').forEach(btn => {
+        document.getElementById('header-logo-click').addEventListener('click', () => switchView('rulebook'));
+
+        document.getElementById('btn-close-announcement').addEventListener('click', () => {
+            document.getElementById('announcement-bar').style.display = 'none';
+        });
+
+        document.querySelectorAll('.admin-subtab-btn').forEach(btn => {
+            btn.addEventListener('click', () => switchAdminSubtab(btn.dataset.subtab));
+        });
+
+        // Admin Action: Record Offline Bid
+        document.getElementById('btn-admin-submit-bid').addEventListener('click', () => {
+            const assetId = parseInt(document.getElementById('admin-assign-asset-select').value);
+            const teamId = parseInt(document.getElementById('admin-assign-team-select').value);
+            const price = parseFloat(document.getElementById('admin-assign-price-input').value);
+
+            if (!assetId || !teamId || isNaN(price) || price <= 0) {
+                showToast('Please select valid asset, team and purchase price!', true);
+                return;
+            }
+
+            const team = state.teams.find(t => t.id === teamId);
+            const asset = state.assets.find(a => a.id === assetId);
+
+            const ownedCount = state.assets.filter(a => a.ownerTeamId === teamId && a.status === 'Sold').length;
+            if (ownedCount >= 5) {
+                showToast(`Limit Reached! ${team.name} already owns the maximum allowed 5 assets.`, true);
+                return;
+            }
+
+            if (team.remainingBudget < price) {
+                showToast(`Insufficient Budget! ${team.name} only has ₹${team.remainingBudget} Cr remaining.`, true);
+                return;
+            }
+
+            pushHistorySnapshot();
+            team.remainingBudget -= price;
+            asset.ownerTeamId = teamId;
+            asset.purchasePrice = price;
+            asset.status = 'Sold';
+
+            document.getElementById('admin-assign-price-input').value = '';
+            broadcastUpdate();
+            renderAllViews();
+            showToast(`<i class="fa-solid fa-gavel"></i> Asset #${asset.id} sold to ${team.name} for ₹${price} Cr!`);
+            sendSystemNotification('Asset Sold', `Asset #${asset.id} ${asset.name} sold to ${team.name} for ₹${price} Cr!`);
+        });
+
+        // Admin Action: Assign Sector
+        document.getElementById('btn-admin-submit-sector').addEventListener('click', () => {
+            const teamId = parseInt(document.getElementById('admin-sector-team-select').value);
+            const sectorName = document.getElementById('admin-sector-name-select').value;
+            const team = state.teams.find(t => t.id === teamId);
+
+            if (team) {
+                pushHistorySnapshot();
+                team.sector = sectorName;
+                broadcastUpdate();
+                renderAllViews();
+                showToast(`<i class="fa-solid fa-car-side"></i> ${team.name} assigned to sector: ${sectorName}`);
+                sendSystemNotification('Sector Assigned', `${team.name} assigned to sector: ${sectorName}`);
+            }
+        });
+
+        // Admin Action: Adjust Budget
+        document.getElementById('btn-admin-submit-budget').addEventListener('click', () => {
+            const teamId = parseInt(document.getElementById('admin-budget-team-select').value);
+            const type = document.getElementById('admin-budget-type-select').value;
+            const amount = parseFloat(document.getElementById('admin-budget-amount-input').value);
+            const team = state.teams.find(t => t.id === teamId);
+
+            if (!team || isNaN(amount) || amount < 0) {
+                showToast('Please enter a valid amount!', true);
+                return;
+            }
+
+            pushHistorySnapshot();
+            if (type === 'add') team.remainingBudget += amount;
+            if (type === 'deduct') team.remainingBudget = Math.max(0, team.remainingBudget - amount);
+            if (type === 'set') team.remainingBudget = amount;
+
+            document.getElementById('admin-budget-amount-input').value = '';
+            broadcastUpdate();
+            renderAllViews();
+            showToast(`<i class="fa-solid fa-coins"></i> Budget updated for ${team.name}: ₹${team.remainingBudget} Cr`);
+        });
+
+        // Admin Action: Change Phase
+        document.getElementById('btn-admin-submit-phase').addEventListener('click', () => {
+            const phaseVal = parseInt(document.getElementById('admin-phase-select').value);
+            setActivePhaseInternal(phaseVal);
+        });
+
+        // Admin Action: Push Announcement
+        document.getElementById('btn-admin-submit-notice').addEventListener('click', () => {
+            const text = document.getElementById('admin-notice-input').value.trim();
+            if (!text) {
+                showToast('Please enter notice text!', true);
+                return;
+            }
+            pushHistorySnapshot();
+            state.announcements.push({
+                id: Date.now(),
+                text: text,
+                time: new Date().toLocaleTimeString()
+            });
+            document.getElementById('admin-notice-input').value = '';
+            broadcastUpdate();
+            renderAllViews();
+            showToast('<i class="fa-solid fa-bullhorn"></i> Announcement published!');
+            sendSystemNotification('Bid A Biz Announcement', text);
+        });
+
+        // DYNAMIC ADD TEAM
+        document.getElementById('btn-admin-add-team').addEventListener('click', () => {
+            const name = document.getElementById('admin-new-team-name').value.trim();
+            const members = document.getElementById('admin-new-team-members').value.trim();
+            const budget = parseFloat(document.getElementById('admin-new-team-budget').value);
+            const sector = document.getElementById('admin-new-team-sector').value;
+
+            if (!name) {
+                showToast('Please enter a Team Name!', true);
+                return;
+            }
+
+            pushHistorySnapshot();
+            const newId = state.teams.length > 0 ? Math.max(...state.teams.map(t => t.id)) + 1 : 1;
+            state.teams.push({
+                id: newId,
+                name: name,
+                members: members || 'Unspecified',
+                remainingBudget: isNaN(budget) ? 100 : budget,
+                sector: sector || 'Unassigned'
+            });
+
+            document.getElementById('admin-new-team-name').value = '';
+            document.getElementById('admin-new-team-members').value = '';
+            broadcastUpdate();
+            renderAllViews();
+            showToast(`<i class="fa-solid fa-users"></i> Team "${name}" created!`);
+        });
+
+        // DYNAMIC ADD ASSET
+        document.getElementById('btn-admin-add-asset').addEventListener('click', () => {
+            const name = document.getElementById('admin-new-asset-name').value.trim();
+            const price = parseFloat(document.getElementById('admin-new-asset-price').value);
+            const category = document.getElementById('admin-new-asset-cat').value;
+            const vertical = document.getElementById('admin-new-asset-vert').value;
+
+            if (!name || isNaN(price) || price <= 0) {
+                showToast('Please enter asset name and valid base price!', true);
+                return;
+            }
+
+            pushHistorySnapshot();
+            const newId = state.assets.length > 0 ? Math.max(...state.assets.map(a => a.id)) + 1 : 1;
+            state.assets.push({
+                id: newId,
+                name: name,
+                basePrice: price,
+                category: category,
+                vertical: vertical,
+                ownerTeamId: null,
+                purchasePrice: null,
+                status: 'Available'
+            });
+
+            document.getElementById('admin-new-asset-name').value = '';
+            document.getElementById('admin-new-asset-price').value = '';
+            broadcastUpdate();
+            renderAllViews();
+            showToast(`<i class="fa-solid fa-box"></i> Asset #${newId} "${name}" created!`);
+        });
+
+        // DYNAMIC ADD EVENT PHASE
+        document.getElementById('btn-admin-add-phase').addEventListener('click', () => {
+            const name = document.getElementById('admin-new-phase-name').value.trim();
+            const desc = document.getElementById('admin-new-phase-desc').value.trim();
+
+            if (!name) {
+                showToast('Please enter phase title!', true);
+                return;
+            }
+
+            pushHistorySnapshot();
+            const newId = state.eventPhases.length > 0 ? Math.max(...state.eventPhases.map(p => p.id)) + 1 : 1;
+            state.eventPhases.push({
+                id: newId,
+                name: name,
+                desc: desc || 'Custom event stage'
+            });
+
+            document.getElementById('admin-new-phase-name').value = '';
+            document.getElementById('admin-new-phase-desc').value = '';
+            broadcastUpdate();
+            renderAllViews();
+            showToast(`<i class="fa-solid fa-list-check"></i> Event Phase #${newId} "${name}" created!`);
+        });
+
+        // Preset notice buttons
+        document.querySelectorAll('.preset-announcement-btns .btn-tag').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.asset-filter-bar .filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                renderAuctionSidebar(btn.dataset.filter);
+                document.getElementById('admin-notice-input').value = btn.dataset.notice;
             });
         });
 
-        // Bid controls
-        document.getElementById('bid-decrease').addEventListener('click', () => {
-            const input = document.getElementById('bid-amount-input');
-            const minInc = getMinIncrement(state.currentBid);
-            let val = parseInt(input.value) || minInc;
-            val = Math.max(minInc, val - 1);
-            input.value = val;
-            updateBidDisplay();
+        document.getElementById('btn-admin-undo').addEventListener('click', undoLastAction);
+        document.getElementById('btn-admin-reset-system').addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset all teams, assets, and event phases to default state?')) {
+                pushHistorySnapshot();
+                state.eventPhases = getDefaultPhases();
+                state.teams = getDefaultTeams();
+                state.assets = getDefaultAssets();
+                state.currentPhase = 1;
+                broadcastUpdate();
+                renderAllViews();
+                showToast('<i class="fa-solid fa-triangle-exclamation"></i> Reset state to defaults!');
+            }
         });
 
-        document.getElementById('bid-increase').addEventListener('click', () => {
-            const input = document.getElementById('bid-amount-input');
-            let val = parseInt(input.value) || 0;
-            val += 1;
-            input.value = val;
-            updateBidDisplay();
-        });
+        // Edit Sale Modal Save
+        document.getElementById('edit-sale-save').addEventListener('click', () => {
+            if (!editingAssetId) return;
+            const newTeamId = parseInt(document.getElementById('edit-sale-team-select').value);
+            const newPrice = parseFloat(document.getElementById('edit-sale-price-input').value);
+            const asset = state.assets.find(a => a.id === editingAssetId);
 
-        document.getElementById('bid-amount-input').addEventListener('input', updateBidDisplay);
+            if (!asset || isNaN(newPrice) || newPrice <= 0) {
+                showToast('Invalid purchase price!', true);
+                return;
+            }
 
-        document.getElementById('btn-place-bid').addEventListener('click', placeBid);
-
-        // Sell / unsold / cancel
-        document.getElementById('btn-sell').addEventListener('click', sellAsset);
-        document.getElementById('btn-unsold').addEventListener('click', markUnsold);
-        document.getElementById('btn-cancel-auction').addEventListener('click', cancelAuction);
-        document.getElementById('btn-sold-continue').addEventListener('click', closeSoldOverlay);
-
-        const btnCancelTop = document.getElementById('btn-cancel-auction-top');
-        if (btnCancelTop) btnCancelTop.addEventListener('click', cancelAuction);
-
-        // Asset view filters
-        document.getElementById('asset-vertical-filter').addEventListener('change', renderAssetsView);
-        document.getElementById('asset-status-filter').addEventListener('change', renderAssetsView);
-
-        // Global asset verticals toggle
-        const verticalsToggleBtn = document.getElementById('btn-global-toggle-verticals');
-        if (verticalsToggleBtn) {
-            verticalsToggleBtn.addEventListener('click', () => {
-                globalVerticalsVisible = !globalVerticalsVisible;
-                renderAssetsView();
-            });
-        }
-
-        // Global teams toggle
-        const globalToggleBtn = document.getElementById('btn-global-toggle-assets');
-        if (globalToggleBtn) {
-            globalToggleBtn.addEventListener('click', () => {
-                globalAssetsExpanded = !globalAssetsExpanded;
-                renderTeamsView();
-            });
-        }
-
-        // Global results portfolios toggle
-        const portfoliosToggleBtn = document.getElementById('btn-global-toggle-portfolios');
-        if (portfoliosToggleBtn) {
-            portfoliosToggleBtn.addEventListener('click', () => {
-                globalPortfoliosVisible = !globalPortfoliosVisible;
-                portfoliosToggleBtn.title = globalPortfoliosVisible ? 'Hide Portfolios' : 'Show Portfolios';
-                portfoliosToggleBtn.innerHTML = globalPortfoliosVisible ? '▼ Hide' : '▶ Show';
-
-                const container = document.getElementById('post-disaster-results-body');
-                if (container && state.disasterApplied) {
-                    container.style.display = globalPortfoliosVisible ? 'block' : 'none';
-                }
-            });
-        }
-
-        // Spin the Wheel Logic
-        const btnSpinWheel = document.getElementById('btn-spin-wheel');
-        const wheel = document.getElementById('disaster-wheel');
-        const wheelResult = document.getElementById('wheel-result-display');
-        const wheelPointer = document.querySelector('.wheel-pointer');
-        let currentWheelRotation = 0;
-
-        if (btnSpinWheel && wheel) {
-            btnSpinWheel.addEventListener('click', () => {
-                if (btnSpinWheel.disabled) return;
-                btnSpinWheel.disabled = true;
-                wheelResult.style.opacity = '0';
-                wheel.classList.add('blur-spin');
-
-                // W=0, X=1, Y=2, Z=3
-                // Angles to center the top pointer on each segment:
-                // W (red) -> 0-90deg -> center 45deg -> backward 45 = 315deg
-                // X (yellow) -> 90-180deg -> center 135deg -> backward 135 = 225deg
-                // Y (blue) -> 180-270deg -> center 225deg -> backward 225 = 135deg
-                // Z (green) -> 270-360deg -> center 315deg -> backward 315 = 45deg
-                const angles = [315, 225, 135, 45];
-                const codes = ['W', 'X', 'Y', 'Z'];
-
-                const randomIndex = Math.floor(Math.random() * 4);
-                const targetAngle = angles[randomIndex];
-                const selectedCode = codes[randomIndex];
-
-                // Calculate total rotation
-                const extraSpins = 6 + Math.floor(Math.random() * 4); // 6 to 9 full spins
-                // Add current rotation to keep it winding up progressively
-                const baseRotation = Math.floor(currentWheelRotation / 360) * 360;
-                const totalRotation = baseRotation + (extraSpins * 360) + targetAngle;
-
-                currentWheelRotation = totalRotation;
-                wheel.style.transform = `rotate(${totalRotation}deg)`;
-
-                // Remove blur right before the wheel stops completely to snap into focus
-                setTimeout(() => {
-                    wheel.classList.remove('blur-spin');
-                }, 7500);
-
-                // Wait for animation to finish (9s in CSS)
-                setTimeout(() => {
-                    wheelResult.innerHTML = `DISASTER <span style="font-size:3.5rem; margin: 0 0.5rem;">${selectedCode}</span> SELECTED`;
-                    wheelResult.style.opacity = '1';
-
-                    // Pre-select this code for the Results tab
-                    selectedDisasterCode = selectedCode;
-                    updateDisasterUI();
-
-                    btnSpinWheel.disabled = false;
-                    btnSpinWheel.textContent = "SPIN AGAIN";
-                }, 9000);
-            });
-        }
-
-        // Disaster buttons
-        document.querySelectorAll('.disaster-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                selectedDisasterCode = btn.dataset.code;
-                updateDisasterUI();
-            });
-        });
-
-        document.getElementById('btn-apply-disaster').addEventListener('click', applyDisaster);
-        document.getElementById('btn-reset-disaster').addEventListener('click', resetDisaster);
-
-        // Export
-        document.getElementById('btn-export-master').addEventListener('click', exportMasterSheet);
-        document.getElementById('btn-export-team-pdfs').addEventListener('click', exportTeamPDFs);
-
-        // Factory Reset & Backup Restore
-        const resetBtn = document.getElementById('btn-reset-all');
-        const restoreBtn = document.getElementById('btn-restore-backup');
-        const backupInfo = document.getElementById('backup-info-text');
-
-        function checkBackup() {
-            if (localStorage.getItem(STORAGE_KEY + '_backup')) {
-                const time = localStorage.getItem(STORAGE_KEY + '_backup_time');
-                if (restoreBtn) restoreBtn.style.display = 'inline-block';
-                if (backupInfo) {
-                    backupInfo.style.display = 'inline-block';
-                    backupInfo.textContent = `Backup available from: ${time}`;
+            if (asset.ownerTeamId !== newTeamId) {
+                const targetOwned = state.assets.filter(a => a.ownerTeamId === newTeamId && a.status === 'Sold').length;
+                if (targetOwned >= 5) {
+                    showToast(`Limit Reached! Target team already owns the maximum 5 assets.`, true);
+                    return;
                 }
             }
-        }
-        checkBackup();
 
-        if (restoreBtn) {
-            restoreBtn.addEventListener('click', () => {
-                showCustomModal(
-                    '↩️ Restore Backup',
-                    'CRITICAL: Restore the last backup?<br>Current data will be OVERWRITTEN.',
-                    false,
-                    'Yes, Restore Now',
-                    false,
-                    () => {
-                        const backupData = localStorage.getItem(STORAGE_KEY + '_backup');
-                        if (backupData) {
-                            localStorage.setItem(STORAGE_KEY, backupData);
-                            window.location.reload();
-                        }
-                    }
-                );
+            pushHistorySnapshot();
+
+            if (asset.ownerTeamId) {
+                const oldTeam = state.teams.find(t => t.id === asset.ownerTeamId);
+                if (oldTeam) oldTeam.remainingBudget += asset.purchasePrice;
+            }
+
+            const newTeam = state.teams.find(t => t.id === newTeamId);
+            if (newTeam) newTeam.remainingBudget -= newPrice;
+
+            asset.ownerTeamId = newTeamId;
+            asset.purchasePrice = newPrice;
+            asset.status = 'Sold';
+
+            document.getElementById('edit-sale-modal').style.display = 'none';
+            broadcastUpdate();
+            renderAllViews();
+            showToast('<i class="fa-solid fa-pen-to-square"></i> Sale updated successfully!');
+        });
+
+        document.getElementById('edit-sale-cancel').addEventListener('click', () => {
+            document.getElementById('edit-sale-modal').style.display = 'none';
+        });
+
+        document.getElementById('btn-close-portfolio-modal').addEventListener('click', () => {
+            document.getElementById('portfolio-modal').style.display = 'none';
+        });
+
+        document.getElementById('portfolio-team-selector').addEventListener('change', renderPortfoliosView);
+        document.getElementById('admin-asset-status-filter').addEventListener('change', renderAdminControls);
+
+        // PDF Viewer Navigation Controls
+        ['rulebook', 'catalogue'].forEach(type => {
+            const ps = pdfState[type];
+            document.getElementById(`${type}-prev`).addEventListener('click', () => {
+                if (ps.pageNum > 1) {
+                    jumpToPDFPage(type, ps.pageNum - 1);
+                }
             });
-        }
-
-        if (resetBtn) {
-            resetBtn.addEventListener('click', () => {
-                showCustomModal(
-                    '<span style="color:var(--accent-rose); text-shadow:var(--neon-rose);">⚠️ FACTORY RESET</span>',
-                    'CRITICAL WARNING: Are you absolutely sure you want to reset ALL auction data? This cannot be undone.<br><br><span style="color:var(--text-muted); font-size:0.9rem;">Type "<b>RESET</b>" below to confirm factory reset:</span>',
-                    true, // show input
-                    'Permanently Reset Data',
-                    true, // isDanger
-                    (typed) => {
-                        if (typed && typed.trim().toUpperCase() === 'RESET') {
-                            // 1. Save internal backup
-                            const currentData = localStorage.getItem(STORAGE_KEY);
-                            if (currentData) {
-                                localStorage.setItem(STORAGE_KEY + '_backup', currentData);
-                                localStorage.setItem(STORAGE_KEY + '_backup_time', new Date().toLocaleString());
-
-                                // 2. Auto-Download JSON backup
-                                try {
-                                    const blob = new Blob([currentData], { type: 'application/json' });
-                                    const url = URL.createObjectURL(blob);
-                                    const a = document.createElement('a');
-                                    a.href = url;
-                                    a.download = `bid_crusade_backup_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
-                                    document.body.appendChild(a);
-                                    a.click();
-                                    document.body.removeChild(a);
-                                    URL.revokeObjectURL(url);
-                                } catch (e) { console.error('Auto download failed', e); }
-                            }
-
-                            // 3. Wipe and reload
-                            localStorage.removeItem(STORAGE_KEY);
-                            setTimeout(() => window.location.reload(), 500);
-                        } else if (typed !== null && typed !== true) {
-                            // If they typed something wrong
-                            showToast('Incorrect confirmation text. Reset aborted.', 'alert');
-                        }
-                    }
-                );
+            document.getElementById(`${type}-next`).addEventListener('click', () => {
+                if (ps.pdfDoc && ps.pageNum < ps.pdfDoc.numPages) {
+                    jumpToPDFPage(type, ps.pageNum + 1);
+                }
             });
-        }
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            const activeTag = document.activeElement.tagName.toUpperCase();
-            if (activeTag === 'INPUT' || activeTag === 'TEXTAREA') return;
-
-            if (e.key === '1') switchView('auction');
-            if (e.key === '2') switchView('assets');
-            if (e.key === '3') switchView('teams');
-            if (e.key === '4') switchView('wheel');
-            if (e.key === '5') switchView('results');
+            document.getElementById(`${type}-page-num`).addEventListener('change', (e) => {
+                const val = parseInt(e.target.value);
+                if (ps.pdfDoc && val >= 1 && val <= ps.pdfDoc.numPages) {
+                    jumpToPDFPage(type, val);
+                }
+            });
         });
     }
 
-    // ===========================
-    // INITIALIZATION
-    // ===========================
-    function init() {
-        const loaded = loadState();
-        if (!loaded) {
-            initTeams();
-        }
+    function setActivePhaseInternal(phaseVal) {
+        pushHistorySnapshot();
+        state.currentPhase = phaseVal;
 
-        // Restore disaster selection
-        if (state.disasterCode) {
-            selectedDisasterCode = state.disasterCode;
-        }
+        const phaseObj = state.eventPhases.find(p => p.id === phaseVal) || { name: `Phase ${phaseVal}` };
+        const noticeMsg = `Phase Transition: Event is now in Phase ${phaseVal} — ${phaseObj.name}`;
+        state.announcements.push({
+            id: Date.now(),
+            text: noticeMsg,
+            time: new Date().toLocaleTimeString()
+        });
 
-        attachEventListeners();
-        updateHeaderStats();
-        renderAuctionSidebar();
-
-        // If there was an active auction in progress, restore it
-        if (state.auctionAssetId && !isAssetSold(state.auctionAssetId)) {
-            startAuction(state.auctionAssetId);
-        }
+        broadcastUpdate();
+        renderAllViews();
+        showToast(`<i class="fa-solid fa-bolt"></i> Phase changed to: ${phaseObj.name}`);
+        sendSystemNotification('Event Phase Transition', noticeMsg);
     }
 
-    // Start the app
-    document.addEventListener('DOMContentLoaded', init);
+    // EXPOSE PUBLIC METHODS FOR INLINE ONCLICK HANDLERS
+    window.BidApp = {
+        setActivePhase: function(phaseId) {
+            if (state.role === 'admin') {
+                setActivePhaseInternal(phaseId);
+            }
+        },
+
+        openPortfolioModal: function (teamId) {
+            const team = state.teams.find(t => t.id === teamId);
+            if (!team) return;
+            const ownedAssets = state.assets.filter(a => a.ownerTeamId === team.id && a.status === 'Sold');
+            const totalSpend = ownedAssets.reduce((sum, a) => sum + (a.purchasePrice || 0), 0);
+
+            document.getElementById('modal-team-name').innerText = team.name;
+            document.getElementById('modal-team-sector').innerText = team.sector || 'Unassigned';
+            document.getElementById('modal-team-sector').className = `sector-badge ${getSectorBadgeClass(team.sector)}`;
+            document.getElementById('modal-team-budget').innerText = `₹${team.remainingBudget} Cr`;
+            document.getElementById('modal-team-assets-count').innerText = `${ownedAssets.length}/5`;
+            document.getElementById('modal-team-total-spend').innerText = `₹${totalSpend} Cr`;
+            document.getElementById('modal-team-members').innerText = team.members || 'No members listed';
+
+            const tbody = document.getElementById('modal-portfolio-assets-tbody');
+            tbody.innerHTML = ownedAssets.length === 0 ? '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No assets owned yet</td></tr>' :
+                ownedAssets.map(a => `
+                    <tr>
+                        <td><strong>#${a.id}</strong></td>
+                        <td>${a.name}</td>
+                        <td>Category ${a.category} (${a.vertical})</td>
+                        <td><strong style="color:var(--accent-rose);">₹${a.purchasePrice} Cr</strong></td>
+                    </tr>
+                `).join('');
+
+            document.getElementById('portfolio-modal').style.display = 'flex';
+        },
+
+        openEditSaleModal: function (assetId) {
+            editingAssetId = assetId;
+            const asset = state.assets.find(a => a.id === assetId);
+            if (!asset) return;
+
+            document.getElementById('edit-sale-title').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit Sale: #${asset.id} ${asset.name}`;
+            const sel = document.getElementById('edit-sale-team-select');
+            sel.innerHTML = state.teams.map(t => {
+                const ownedCount = state.assets.filter(a => a.ownerTeamId === t.id && a.status === 'Sold').length;
+                const isFull = ownedCount >= 5 && t.id !== asset.ownerTeamId;
+                return `<option value="${t.id}" ${isFull ? 'disabled' : ''}>
+                    ${isFull ? '[FULL 5/5] ' : ''}${t.name} (Assets: ${ownedCount}/5)
+                </option>`;
+            }).join('');
+            sel.value = asset.ownerTeamId;
+            document.getElementById('edit-sale-price-input').value = asset.purchasePrice || asset.basePrice;
+
+            document.getElementById('edit-sale-modal').style.display = 'flex';
+        },
+
+        releaseAsset: function (assetId) {
+            const asset = state.assets.find(a => a.id === assetId);
+            if (!asset || asset.status !== 'Sold') return;
+            if (confirm(`Release #${asset.id} ${asset.name} back to Available market?`)) {
+                pushHistorySnapshot();
+                const team = state.teams.find(t => t.id === asset.ownerTeamId);
+                if (team) team.remainingBudget += asset.purchasePrice;
+
+                asset.ownerTeamId = null;
+                asset.purchasePrice = null;
+                asset.status = 'Available';
+
+                broadcastUpdate();
+                renderAllViews();
+                showToast(`<i class="fa-solid fa-lock-open"></i> Asset #${asset.id} released back to Available market.`);
+            }
+        },
+
+        saveTeamDetails: function (teamId) {
+            const name = document.getElementById(`edit-tname-${teamId}`).value.trim();
+            const members = document.getElementById(`edit-tmembers-${teamId}`).value.trim();
+            const budget = parseFloat(document.getElementById(`edit-tbudget-${teamId}`).value);
+            const sector = document.getElementById(`edit-tsector-${teamId}`).value;
+            const team = state.teams.find(t => t.id === teamId);
+
+            if (team && name) {
+                pushHistorySnapshot();
+                team.name = name;
+                team.members = members;
+                if (!isNaN(budget)) team.remainingBudget = budget;
+                team.sector = sector;
+                broadcastUpdate();
+                renderAllViews();
+                showToast(`<i class="fa-solid fa-users"></i> Details updated for ${team.name}`);
+            }
+        },
+
+        deleteTeam: function (teamId) {
+            const team = state.teams.find(t => t.id === teamId);
+            if (!team) return;
+            if (confirm(`Delete team "${team.name}"? Any owned assets will be released back to market.`)) {
+                pushHistorySnapshot();
+                state.assets.forEach(a => {
+                    if (a.ownerTeamId === teamId) {
+                        a.ownerTeamId = null;
+                        a.purchasePrice = null;
+                        a.status = 'Available';
+                    }
+                });
+                state.teams = state.teams.filter(t => t.id !== teamId);
+                broadcastUpdate();
+                renderAllViews();
+                showToast(`<i class="fa-solid fa-trash-can"></i> Team "${team.name}" deleted.`);
+            }
+        },
+
+        saveAssetDetails: function (assetId) {
+            const name = document.getElementById(`edit-aname-${assetId}`).value.trim();
+            const basePrice = parseFloat(document.getElementById(`edit-aprice-${assetId}`).value);
+            const asset = state.assets.find(a => a.id === assetId);
+
+            if (asset && name && !isNaN(basePrice)) {
+                pushHistorySnapshot();
+                asset.name = name;
+                asset.basePrice = basePrice;
+                broadcastUpdate();
+                renderAllViews();
+                showToast(`<i class="fa-solid fa-box"></i> Asset #${asset.id} updated!`);
+            }
+        },
+
+        deleteAsset: function (assetId) {
+            const asset = state.assets.find(a => a.id === assetId);
+            if (!asset) return;
+            if (confirm(`Delete asset #${asset.id} "${asset.name}"?`)) {
+                pushHistorySnapshot();
+                if (asset.ownerTeamId && asset.purchasePrice) {
+                    const team = state.teams.find(t => t.id === asset.ownerTeamId);
+                    if (team) team.remainingBudget += asset.purchasePrice;
+                }
+                state.assets = state.assets.filter(a => a.id !== assetId);
+                broadcastUpdate();
+                renderAllViews();
+                showToast(`<i class="fa-solid fa-trash-can"></i> Asset #${assetId} deleted.`);
+            }
+        },
+
+        savePhaseDetails: function (phaseId) {
+            const name = document.getElementById(`edit-pname-${phaseId}`).value.trim();
+            const desc = document.getElementById(`edit-pdesc-${phaseId}`).value.trim();
+            const phase = state.eventPhases.find(p => p.id === phaseId);
+
+            if (phase && name) {
+                pushHistorySnapshot();
+                phase.name = name;
+                phase.desc = desc;
+                broadcastUpdate();
+                renderAllViews();
+                showToast(`<i class="fa-solid fa-list-check"></i> Phase #${phase.id} updated!`);
+            }
+        },
+
+        deletePhase: function (phaseId) {
+            const phase = state.eventPhases.find(p => p.id === phaseId);
+            if (!phase) return;
+            if (confirm(`Delete event phase #${phase.id} "${phase.name}"?`)) {
+                pushHistorySnapshot();
+                state.eventPhases = state.eventPhases.filter(p => p.id !== phaseId);
+                if (state.currentPhase === phaseId) {
+                    state.currentPhase = state.eventPhases.length > 0 ? state.eventPhases[0].id : 1;
+                }
+                broadcastUpdate();
+                renderAllViews();
+                showToast(`<i class="fa-solid fa-trash-can"></i> Phase #${phaseId} deleted.`);
+            }
+        }
+    };
+
+    function showToast(msg, isError = false) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast-msg';
+        if (isError) toast.style.borderColor = '#ef4444';
+        toast.innerHTML = msg;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initTheme();
+        loadState();
+        setupEventListeners();
+        setRole('participant');
+        renderAllViews();
+        switchView('rulebook');
+
+        if ('Notification' in window && Notification.permission === 'default') {
+            setTimeout(() => {
+                requestNotificationPermission(true);
+            }, 600);
+        }
+    });
+
 })();

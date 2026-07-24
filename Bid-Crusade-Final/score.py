@@ -1,5 +1,5 @@
 # ============================================
-# BIG CRUSADES – TERMINAL SCORING ENGINE
+# BID A BIZ – TERMINAL SCORING ENGINE
 # ============================================
 
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
@@ -10,61 +10,86 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font
 from collections import defaultdict
 import os
+import json
 
 # -----------------------------
 # CONFIGURATION
 # -----------------------------
 
 INITIAL_CAPITAL = 100.0
-EXCEL_FILE = "Big_Crusades_Final_Score_Sheet.xlsx"
+EXCEL_FILE = "Bid_Biz_Final_Score_Sheet.xlsx"
+STATE_JSON_FILE = "bid_biz_state.json"
 
 # -----------------------------
 # ASSET DATABASE
 # (ID → Name, Visible Category, Hidden Vertical, Base Price)
+# Matching app.js database exactly (with dynamic JSON support)
 # -----------------------------
 
-assets = {
-1: ("Metropolitan Commercial Tower", "C", "V1", 19),
-    2: ("Industrial Manufacturing Plant", "A", "V1", 21),
-    3: ("Renewable Energy Solar Grid", "D", "V1", 20),
-    4: ("Cloud Server Farm Facility", "B", "V1", 18),
-    5: ("Multi-Specialty Hospital Infrastructure Unit", "A", "V1", 21),
-    6: ("Agricultural Processing Facility", "D", "V1", 15),
-    7: ("Multi-Brand Automobile Assembly Unit", "B", "V1", 20),
-    8: ("Pharmaceutical Manufacturing Facility", "C", "V1", 19),
-    9: ("Mining & Raw Material Extraction Lease", "A", "V1", 22),
-    10: ("Green Hydrogen Pilot Plant", "D", "V1", 19),
-    11: ("AI & Data Analytics Infrastructure Suite", "B", "V2", 12),
-    12: ("Automated Robotics Assembly System", "A", "V2", 14),
-    13: ("High-Speed Data Cable Network", "C", "V2", 11),
-    14: ("Cross-Industry Patent Portfolio", "C", "V2", 9),
-    15: ("Advanced Cybersecurity Infrastructure Suite", "B", "V2", 10),
-    16: ("Data Center Cooling & Infrastructure System", "D", "V2", 8),
-    17: ("Urban Smart Monitoring Network", "A", "V2", 9),
-    18: ("Research & Development Innovation Hub", "C", "V2", 11),
-    19: ("Cross-Platform Mobile Application Ecosystem", "B", "V2", 8),
-    20: ("Enterprise ERP & Automation System", "D", "V2", 10),
-    21: ("National Logistics Fleet & Warehousing Rights", "B", "V3", 15),
-    22: ("Scalable E-Commerce Marketplace Platform", "D", "V3", 13),
-    23: ("Pan-India Distribution Rights", "A", "V3", 11),
-    24: ("Cold Storage & Warehousing Network", "C", "V3", 12),
-    25: ("Multi-State Retail Franchise Rights", "C", "V3", 13),
-    26: ("Export-Import Multi-Nation Trade License", "B", "V3", 12),
-    27: ("National Warehouse & Fulfillment Network", "D", "V3", 15),
-    28: ("Cold Chain Pharmaceutical Distribution Network", "B", "V3", 13),
-    29: ("Regional Telecom Spectrum Allocation", "A", "V3", 18),
-    30: ("Commercial Banking Infrastructure & NBFC License", "C", "V3", 14),
-    31: ("Tier-2 City Land Bank", "B", "V4", 15),
-    32: ("Strategic Insurance & Risk Hedging Contract Portfolio", "D", "V4", 7),
-    33: ("Private Power Backup & Microgrid System", "B", "V4", 9),
-    34: ("Government Infrastructure Contract", "A", "V4", 16),
-    35: ("Diversified Commodity Trading Desk", "D", "V4", 11),
-    36: ("Strategic Land Reserve in Emerging Smart City Zone", "C", "V4", 13),
-    37: ("Regulatory Compliance & Legal Shield Framework", "C", "V4", 8),
-    38: ("Multi-Sector ESG Certification Portfolio", "A", "V4", 6),
-    39: ("Long-Term Raw Material Supply Contract", "D", "V4", 10),
-    40: ("Infrastructure Maintenance & AMC Rights", "A", "V4", 7),
+default_assets = {
+    1: ("Pan-India Distribution Rights", "A", "V3", 11),
+    2: ("Multi-Specialty Hospital Unit", "A", "V1", 21),
+    3: ("Multi-Sector ESG Certification Portfolio", "A", "V4", 6),
+    4: ("Automated Robotics Assembly System", "A", "V2", 14),
+    5: ("Regional Telecom Spectrum Allocation", "A", "V3", 18),
+    6: ("Industrial Manufacturing Plant", "A", "V1", 21),
+    7: ("Urban Smart Monitoring Network", "A", "V2", 9),
+    8: ("Government Infrastructure Contract", "A", "V4", 16),
+    9: ("Infrastructure Maintenance Rights", "A", "V4", 7),
+    10: ("Mining & Raw Material Extraction Lease", "A", "V1", 22),
+    11: ("National Logistics Fleet & Warehousing", "B", "V3", 15),
+    12: ("Advanced Cybersecurity Suite", "B", "V2", 10),
+    13: ("Tier-2 City Zoned Land Bank", "B", "V4", 15),
+    14: ("Multi-Brand Automobile Assembly Unit", "B", "V1", 20),
+    15: ("Export-Import Multi-Nation License", "B", "V3", 12),
+    16: ("AI & Data Analytics Infrastructure", "B", "V2", 12),
+    17: ("Private Power Backup Microgrid", "B", "V4", 9),
+    18: ("Cross-Platform Mobile App Ecosystem", "B", "V2", 8),
+    19: ("Cold Chain Pharma Distribution", "B", "V3", 13),
+    20: ("Cloud Server Farm Facility", "B", "V1", 18),
+    21: ("Regulatory Compliance Shield", "C", "V4", 8),
+    22: ("Cross-Industry Patent Portfolio", "C", "V2", 9),
+    23: ("Multi-State Retail Franchise Rights", "C", "V3", 13),
+    24: ("Metropolitan Commercial Tower", "C", "V1", 19),
+    25: ("Strategic Smart City Land Reserve", "C", "V4", 13),
+    26: ("R&D Innovation Hub", "C", "V2", 11),
+    27: ("Commercial Banking & NBFC License", "C", "V3", 14),
+    28: ("Pharmaceutical Manufacturing Facility", "C", "V1", 19),
+    29: ("Cold Storage Network", "C", "V3", 12),
+    30: ("High-Speed Data Cable Network", "C", "V2", 11),
+    31: ("Long-Term Raw Material Supply Contract", "D", "V4", 10),
+    32: ("Agricultural Processing Facility", "D", "V1", 15),
+    33: ("Scalable E-Commerce Platform", "D", "V3", 13),
+    34: ("Data Center Cooling System", "D", "V2", 8),
+    35: ("Commodity Trading Desk License", "D", "V4", 11),
+    36: ("Green Hydrogen Pilot Plant", "D", "V1", 19),
+    37: ("National Warehouse Network", "D", "V3", 15),
+    38: ("Renewable Energy Solar Grid", "D", "V1", 20),
+    39: ("Strategic Insurance & Risk Hedging", "D", "V4", 7),
+    40: ("Enterprise ERP & Automation System", "D", "V2", 10)
 }
+
+assets = default_assets.copy()
+
+# Dynamically load assets if state JSON exists
+if os.path.exists(STATE_JSON_FILE):
+    try:
+        with open(STATE_JSON_FILE, "r") as f:
+            data = json.load(f)
+            if "assets" in data:
+                dynamic_assets = {}
+                for item in data["assets"]:
+                    aid = int(item["id"])
+                    name = item["name"]
+                    category = item.get("category", "A")
+                    vertical = item.get("vertical", "V1")
+                    base_price = float(item.get("basePrice", 10))
+                    dynamic_assets[aid] = (name, category, vertical, base_price)
+                if dynamic_assets:
+                    assets = dynamic_assets
+                    print(f"Loaded {len(assets)} dynamic assets from {STATE_JSON_FILE}")
+    except Exception as e:
+        print(f"Using default asset database (JSON load error: {e})")
 
 # -----------------------------
 # TERMINAL INPUTS
@@ -73,7 +98,7 @@ assets = {
 team_name = input("Enter Team Name: ")
 
 asset_input = input("Enter Asset IDs (comma separated): ")
-asset_ids = [int(x.strip()) for x in asset_input.split(",")]
+asset_ids = [int(x.strip()) for x in asset_input.split(",") if x.strip().isdigit()]
 
 remaining_budget = float(input("Enter Remaining Budget (₹ Cr): "))
 
@@ -84,7 +109,6 @@ disaster_code = input("Enter Disaster Code (W/X/Y/Z): ").upper()
 # -----------------------------
 
 def get_multiplier(category):
-
     if disaster_code == "W":
         if category == "A": return 1.20
         elif category == "D": return 0.80
@@ -105,24 +129,28 @@ def get_multiplier(category):
         elif category == "C": return 0.80
         else: return 1.00
 
+    return 1.00
+
 # -----------------------------
 # CALCULATIONS
 # -----------------------------
 
-total_investment = INITIAL_CAPITAL - remaining_budget
-post_value = 0
+total_investment = max(1.0, INITIAL_CAPITAL - remaining_budget)
+post_value = 0.0
 
 category_investment = defaultdict(float)
 vertical_presence = {"V1":0, "V2":0, "V3":0, "V4":0}
 
 for aid in asset_ids:
-    name, category, vertical, price = assets[aid]
-    category_investment[category] += price
-    vertical_presence[vertical] = 1
-    post_value += price * get_multiplier(category)
+    if aid in assets:
+        name, category, vertical, price = assets[aid]
+        category_investment[category] += price
+        vertical_presence[vertical] = 1
+        post_value += price * get_multiplier(category)
 
 roi = round((post_value - total_investment) / total_investment, 5)
-max_exposure = round(max(category_investment.values()) / total_investment, 5)
+max_exp_val = max(category_investment.values()) if category_investment else 0
+max_exposure = round(max_exp_val / total_investment, 5)
 vertical_count = sum(vertical_presence.values())
 
 extra_asset = 1 if len(asset_ids) >= 5 else 0
@@ -130,7 +158,7 @@ roi_condition = 1 if roi >= 0.08 else 0
 exposure_condition = 1 if max_exposure <= 0.45 else 0
 
 vertical_score = (vertical_count / 4) * 15
-risk_score = 15 if max_exposure <= 0.45 else round(15 * ((1 - max_exposure) / 0.55) ** 2, 1)
+risk_score = 15 if max_exposure <= 0.45 else round(15 * max(0, (1 - max_exposure) / 0.55) ** 2, 1)
 
 roi_score = round(max(0, min(10, roi * 50)), 1)
 
@@ -158,7 +186,7 @@ doc = SimpleDocTemplate(pdf_name)
 elements = []
 styles = getSampleStyleSheet()
 
-elements.append(Paragraph("<b>Big Crusades – Organizer Summary</b>", styles["Title"]))
+elements.append(Paragraph("<b>Bid A Biz Grand Finale – Organizer Summary</b>", styles["Title"]))
 elements.append(Spacer(1, 0.3 * inch))
 
 table_data = [
