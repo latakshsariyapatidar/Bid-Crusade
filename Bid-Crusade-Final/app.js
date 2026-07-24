@@ -227,7 +227,37 @@
                 historyStack: state.historyStack
             };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+            syncServerState(dataToSave);
         } catch (e) { }
+    }
+
+    function syncServerState(dataToSave) {
+        try {
+            fetch('/api/state', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataToSave)
+            }).catch(function() {});
+        } catch (e) {}
+    }
+
+    function checkServerStatePoll() {
+        try {
+            fetch('/api/state')
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (data && data.currentPhase) {
+                        const localStr = localStorage.getItem(STORAGE_KEY);
+                        const serverStr = JSON.stringify(data);
+                        if (localStr !== serverStr) {
+                            localStorage.setItem(STORAGE_KEY, serverStr);
+                            loadState();
+                            renderAllViews();
+                        }
+                    }
+                })
+                .catch(function() {});
+        } catch (e) {}
     }
 
     function broadcastUpdate() {
@@ -1311,6 +1341,7 @@
         setRole('participant');
         renderAllViews();
         switchView('rulebook');
+        setInterval(checkServerStatePoll, 3000);
 
         if ('Notification' in window && Notification.permission === 'default') {
             setTimeout(() => {
