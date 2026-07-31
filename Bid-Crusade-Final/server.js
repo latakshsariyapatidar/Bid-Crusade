@@ -1,6 +1,6 @@
 // ============================================
 // BID A BIZ – LIGHTWEIGHT REALTIME NODE SERVER
-// Zero external dependencies - Node.js built-ins
+// With Real-time Server-Sent Events (SSE) Broadcast
 // ============================================
 
 const http = require('http');
@@ -10,6 +10,20 @@ const path = require('path');
 const PORT = process.env.PORT || 8085;
 const PUBLIC_DIR = __dirname;
 const STATE_FILE = path.join(__dirname, 'bid_biz_state.json');
+
+// Store all connected SSE clients (browsers/devices)
+let sseClients = [];
+
+function broadcastToClients(dataString) {
+    const payload = `data: ${dataString}\n\n`;
+    sseClients.forEach((client, index) => {
+        try {
+            client.write(payload);
+        } catch (e) {
+            sseClients.splice(index, 1);
+        }
+    });
+}
 
 const MIME_TYPES = {
     '.html': 'text/html; charset=utf-8',
@@ -36,7 +50,33 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // 1. GET /api/state — Retrieve current state from bid_biz_state.json
+    // 1. GET /api/events — Real-time Server-Sent Events (SSE) stream
+    if (req.url === '/api/events' && req.method === 'GET') {
+        res.writeHead(200, {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+            'Access-Control-Allow-Origin': '*'
+        });
+
+        // Send current state on connection if available
+        if (fs.existsSync(STATE_FILE)) {
+            fs.readFile(STATE_FILE, 'utf8', (err, data) => {
+                if (!err && data) {
+                    res.write(`data: ${data}\n\n`);
+                }
+            });
+        }
+
+        sseClients.push(res);
+
+        req.on('close', () => {
+            sseClients = sseClients.filter(client => client !== res);
+        });
+        return;
+    }
+
+    // 2. GET /api/state — Retrieve current state from bid_biz_state.json
     if (req.url === '/api/state' && req.method === 'GET') {
         if (fs.existsSync(STATE_FILE)) {
             fs.readFile(STATE_FILE, 'utf8', (err, data) => {
@@ -55,18 +95,22 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // 2. POST /api/state — Save live auction state to bid_biz_state.json
+    // 3. POST /api/state — Save live auction state & broadcast instantly
     if (req.url === '/api/state' && req.method === 'POST') {
         let body = '';
         req.on('data', chunk => { body += chunk; });
         req.on('end', () => {
             try {
                 const parsed = JSON.parse(body);
+                const dataStr = JSON.stringify(parsed);
                 fs.writeFile(STATE_FILE, JSON.stringify(parsed, null, 2), 'utf8', (err) => {
                     if (err) {
                         res.writeHead(500, { 'Content-Type': 'application/json' });
                         res.end(JSON.stringify({ error: 'Failed to write state' }));
                     } else {
+                        // Broadcast updated state to all connected devices in real-time
+                        broadcastToClients(dataStr);
+
                         res.writeHead(200, { 'Content-Type': 'application/json' });
                         res.end(JSON.stringify({ success: true, timestamp: Date.now() }));
                     }
@@ -79,7 +123,7 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // 3. Static File Server
+    // 4. Static File Server
     let filePath = path.join(PUBLIC_DIR, req.url === '/' ? 'index.html' : req.url.split('?')[0]);
     
     if (!filePath.startsWith(PUBLIC_DIR)) {

@@ -1582,6 +1582,58 @@
         } catch (e) {}
     }
 
+    function saveSession() {
+        try {
+            if (state.currentUser) {
+                sessionStorage.setItem('bid_biz_user', JSON.stringify(state.currentUser));
+            } else {
+                sessionStorage.removeItem('bid_biz_user');
+            }
+        } catch (e) {}
+    }
+
+    function loadSession() {
+        try {
+            const saved = sessionStorage.getItem('bid_biz_user');
+            if (saved) {
+                state.currentUser = JSON.parse(saved);
+            }
+        } catch (e) {}
+    }
+
+    function initRealtimeStream() {
+        if (typeof EventSource !== 'undefined') {
+            try {
+                const eventSource = new EventSource('/api/events');
+                eventSource.onmessage = function (e) {
+                    if (e.data) {
+                        try {
+                            const data = JSON.parse(e.data);
+                            if (data && data.currentPhase) {
+                                const localStr = localStorage.getItem(STORAGE_KEY);
+                                const serverStr = JSON.stringify(data);
+                                if (localStr !== serverStr) {
+                                    localStorage.setItem(STORAGE_KEY, serverStr);
+                                    loadState();
+                                    renderAllViews();
+                                }
+                            }
+                        } catch (err) {}
+                    }
+                };
+            } catch (err) {}
+        }
+        setInterval(checkServerStatePoll, 1000);
+    }
+
+    function initApp() {
+        loadSession();
+        loadState();
+        setupEventListeners();
+        renderAllViews();
+        initRealtimeStream();
+    }
+
     function broadcastUpdate() {
         saveState();
         if (broadcastChannel) {
