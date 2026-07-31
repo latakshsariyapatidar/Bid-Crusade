@@ -4,15 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bid A Biz Grand Finale | Live Event Dashboard</title>
-    <meta name="description" content="Bid A Biz Grand Finale - Real-time Event Management & Live Auction Dashboard">
+    <title>Bid A Biz Grand Finale</title>
+    <meta name="description"
+        content="Bid A Biz Grand Finale - Real-time Startup Strategic Acquisition & Auction Platform">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=12">
+    <link rel="stylesheet" href="styles.css?v=28">
 </head>
 
 <body>
@@ -20,194 +21,241 @@
     <!-- ======================== MAIN APP HEADER ======================== -->
     <header id="app-header">
         <div class="header-left">
-            <div class="logo-group" id="header-logo-click">
+            <div class="logo-group" id="header-logo-click" onclick="window.BidApp.onLogoClick()">
                 <h1 class="logo">BID A BIZ <span class="logo-accent">FINALE</span></h1>
-            </div>
-            
-            <!-- EVENT PHASES DROPDOWN IN NAVBAR -->
-            <div class="phase-header-badge-dropdown" id="header-phase-badge">
-                <div class="phase-badge-trigger" id="phase-badge-trigger">
-                    <span class="phase-number-tag" id="header-phase-num">Phase 1/11</span>
-                    <span class="phase-name-tag" id="header-phase-name">Welcome & Briefing</span>
-                    <i class="fa-solid fa-chevron-down" style="font-size:0.7rem; color:var(--text-muted); margin-left:0.3rem;"></i>
-                </div>
-                <div class="phase-dropdown-menu" id="header-phase-dropdown-menu">
-                    <!-- Populated dynamically by JS -->
-                </div>
             </div>
         </div>
 
-        <nav class="header-nav">
-            <button class="nav-btn active" data-view="rulebook" id="nav-rulebook">
+        <nav class="header-nav" id="main-header-nav">
+            <button class="nav-btn active" data-view="home" id="nav-home" onclick="window.BidApp.switchView('home')">
+                <i class="fa-solid fa-house nav-icon"></i> Home
+            </button>
+            <button class="nav-btn" data-view="rulebook" id="nav-rulebook"
+                onclick="window.BidApp.switchView('rulebook')">
                 <i class="fa-solid fa-book nav-icon"></i> Rulebook
             </button>
-            <button class="nav-btn" data-view="leaderboard" id="nav-leaderboard">
-                <i class="fa-solid fa-trophy nav-icon"></i> Leaderboard
-            </button>
-            <button class="nav-btn" data-view="portfolios" id="nav-portfolios">
-                <i class="fa-solid fa-briefcase nav-icon"></i> Portfolios
-            </button>
-            <button class="nav-btn" data-view="catalogue" id="nav-catalogue">
+            <button class="nav-btn" data-view="catalogue" id="nav-catalogue"
+                onclick="window.BidApp.switchView('catalogue')">
                 <i class="fa-solid fa-box nav-icon"></i> Asset Catalogue
             </button>
-            <button class="nav-btn admin-only-nav" data-view="admin" id="nav-admin" style="display:none;">
+            <button class="nav-btn" data-view="portfolios" id="nav-portfolios"
+                onclick="window.BidApp.switchView('portfolios')">
+                <i class="fa-solid fa-briefcase nav-icon"></i> Portfolio
+            </button>
+            <button class="nav-btn admin-only-nav" data-view="admin" id="nav-admin" style="display:none;"
+                onclick="window.BidApp.switchView('admin')">
                 <i class="fa-solid fa-gear nav-icon"></i> Admin Controls
+            </button>
+            <button class="nav-btn btn-logout-nav" id="nav-logout" style="display:none;"
+                onclick="window.BidApp.logoutUser()">
+                <i class="fa-solid fa-right-from-bracket nav-icon"></i> Logout
             </button>
         </nav>
 
         <div class="header-right">
-            <button class="btn-role-switch" id="btn-theme-toggle" title="Toggle Theme (Light / Dark)"><i class="fa-solid fa-moon"></i> Dark</button>
-            <button class="btn-role-switch" id="btn-enable-notifications" title="Enable System Notifications"><i class="fa-solid fa-bell"></i> Notifications</button>
-            <!-- Hidden from participants; visible only when Admin is logged in -->
+            <div class="user-session-badge" id="user-session-badge" style="display:none;">
+                <span class="role-badge" id="logged-in-user-name"
+                    style="background:transparent; border:none; color:var(--accent-orange); font-weight:700; padding:0 0.5rem;"><i
+                        class="fa-solid fa-user"></i> Participant</span>
+            </div>
+            <button class="btn-role-switch" id="btn-enable-notifications" title="Enable System Notifications"
+                style="background:transparent; border:none; color:var(--text-secondary);"
+                onclick="window.BidApp.requestNotificationPermission()"><i class="fa-solid fa-bell"></i>
+                Notifications</button>
+
             <div class="role-badge-container" id="admin-session-indicator" style="display:none;">
-                <span class="role-badge admin-mode"><i class="fa-solid fa-bolt"></i> Admin Mode</span>
-                <button class="btn-role-switch" id="btn-admin-logout" title="Exit Admin Mode">Logout Admin</button>
+                <span class="role-badge admin-mode" style="cursor:pointer;" onclick="window.BidApp.switchView('admin')" title="Open Admin Command Center"><i class="fa-solid fa-bolt"></i> Admin Mode</span>
+                <button class="btn-role-switch" id="btn-admin-logout" title="Exit Admin Mode"
+                    onclick="window.BidApp.logoutUser()">Logout Admin</button>
             </div>
         </div>
     </header>
 
-    <!-- Announcement Bar -->
-    <div id="announcement-bar" class="announcement-bar">
-        <div class="announcement-tag"><i class="fa-solid fa-bullhorn"></i> NOTICE</div>
-        <div class="announcement-marquee" id="announcement-text">Welcome to Bid A Biz Grand Finale! Real-time offline auction updates will appear here live.</div>
-        <button class="announcement-close" id="btn-close-announcement">✕</button>
-    </div>
-
     <!-- MAIN CONTENT CONTAINER -->
     <main id="app-content">
 
-        <!-- ======================== 1. RULEBOOK PDF VIEWER (DEFAULT ACTIVE) ======================== -->
-        <section id="view-rulebook" class="view active">
+        <!-- ======================== 1. LANDING & LOGIN VIEW ======================== -->
+        <section id="view-landing" class="view landing-view active">
+            <div class="landing-hero">
+                <h1 class="landing-title">BID A BIZ <span class="accent-text">FINALE</span></h1>
+
+                <div class="landing-phase-pill">
+                    <span class="pulse-dot"></span>
+                    <span>Active Event Phase: <strong id="landing-phase-title" style="color:var(--accent-orange);">Phase
+                            1 - Welcome & Briefing</strong></span>
+                </div>
+
+                <div class="login-cards">
+                    <div class="login-card" id="card-login-participant">
+                        <div class="card-icon" style="color:var(--accent-orange);"><i class="fa-solid fa-users"></i>
+                        </div>
+                        <h3>Participant Login</h3>
+                        <p>Select your competing team to access assigned sectors, portfolio budget, live bidding
+                            actions, and strategic prompts.</p>
+                        <button class="btn-primary-glow" id="btn-open-participant-login"
+                            onclick="window.BidApp.openParticipantModal()">Participant Login →</button>
+                    </div>
+
+                    <div class="login-card" id="card-login-admin">
+                        <div class="card-icon" style="color:var(--accent-cyan);"><i
+                                class="fa-solid fa-shield-halved"></i></div>
+                        <h3>Admin Command Center</h3>
+                        <p>Control live event phases, assign sectors, record live bids, adjust team budgets, push
+                            alerts, and undo actions.</p>
+                        <button class="btn-accent-glow" id="btn-open-admin-login"
+                            onclick="window.BidApp.openAdminModal()">Admin Login →</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================== 2. PHASE-DRIVEN HOME VIEW ======================== -->
+        <section id="view-home" class="view">
+            <div class="view-container">
+                <!-- Dynamically populated based on active phase -->
+                <div id="home-phase-content"></div>
+            </div>
+        </section>
+
+        <!-- ======================== 3. RULEBOOK DIRECT PDF VIEWER ======================== -->
+        <section id="view-rulebook" class="view">
             <div class="view-container pdf-suite-container">
                 <div class="pdf-header-bar-minimal">
-                    <div class="pdf-control-group">
-                        <button class="pdf-tool-btn" id="rulebook-prev" title="Previous Page"><i class="fa-solid fa-chevron-left"></i></button>
-                        <span class="pdf-page-indicator">
-                            Page <input type="number" id="rulebook-page-num" value="1" min="1"> / <span id="rulebook-page-count">--</span>
-                        </span>
-                        <button class="pdf-tool-btn" id="rulebook-next" title="Next Page"><i class="fa-solid fa-chevron-right"></i></button>
+                    <div class="pdf-title-bar">
+                        <h3 style="font-size:1.2rem; display:flex; align-items:center; gap:0.5rem;"><i
+                                class="fa-solid fa-book" style="color:var(--accent-orange);"></i> Event Official
+                            Rulebook</h3>
                     </div>
-                    <span style="font-size:0.78rem; color:var(--text-muted); font-weight:600;"><i class="fa-solid fa-computer-mouse"></i> Scroll to read · Ctrl + Wheel to zoom</span>
-                </div>
-
-                <div class="pdf-viewport-wrapper" id="rulebook-pdf-body">
-                    <div class="pdf-canvas-container" id="rulebook-canvas-container">
-                        <!-- Pages rendered continuously by JS -->
-                    </div>
-                    <iframe id="rulebook-fallback-iframe" src="Rulebook.pdf" style="display:none; width:100%; height:80vh; border:none; border-radius:8px;"></iframe>
-                </div>
-            </div>
-        </section>
-
-        <!-- ======================== 2. LIVE LEADERBOARD VIEW ======================== -->
-        <section id="view-leaderboard" class="view">
-            <div class="view-container">
-                <div class="view-header">
-                    <div>
-                        <h2>Live Leaderboard</h2>
-                        <p class="view-subtext">Real-time team standings, remaining budget, and portfolio assets</p>
-                    </div>
-                    <div class="leaderboard-stats-summary">
-                        <div class="mini-stat"><span class="stat-lbl">Active Teams:</span> <strong id="lb-teams-count">8</strong></div>
-                        <div class="mini-stat"><span class="stat-lbl">Assets Sold:</span> <strong id="lb-assets-sold">0/40</strong></div>
+                    <div class="pdf-action-group">
+                        <a href="Rulebook.pdf" target="_blank" class="pdf-btn-action glow">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            <span>Open Full PDF Directly</span>
+                        </a>
+                        <a href="Rulebook.pdf" download="Rulebook.pdf" class="pdf-btn-action secondary">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Download PDF</span>
+                        </a>
                     </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="corporate-table" id="leaderboard-table">
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Team Name</th>
-                                <th>Assigned Sector</th>
-                                <th>Remaining Budget</th>
-                                <th>Assets (x/5)</th>
-                                <th>Total Spend</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboard-tbody">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
+                <div class="pdf-viewport-wrapper" style="margin-top:1rem;">
+                    <iframe id="rulebook-iframe" src="Rulebook.pdf"
+                        style="width:100%; height:82vh; border:1px solid var(--border-subtle); border-radius:8px;"></iframe>
                 </div>
             </div>
         </section>
 
-        <!-- ======================== 3. TEAM PORTFOLIOS VIEW ======================== -->
-        <section id="view-portfolios" class="view">
-            <div class="view-container">
-                <div class="view-header">
-                    <div>
-                        <h2>Team Portfolios</h2>
-                        <p class="view-subtext">Inspect acquired assets, purchase prices, sector strategy, and budget balances</p>
-                    </div>
-                    <div class="portfolio-controls">
-                        <select id="portfolio-team-selector" class="select-filter">
-                            <option value="all">All Teams</option>
-                            <!-- Populated by JS -->
-                        </select>
-                    </div>
-                </div>
-
-                <div class="teams-portfolio-grid" id="portfolios-grid-container">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-        </section>
-
-        <!-- ======================== 4. ASSET CATALOGUE PDF VIEWER ======================== -->
+        <!-- ======================== 4. ASSET CATALOGUE DIRECT PDF VIEWER ======================== -->
         <section id="view-catalogue" class="view">
             <div class="view-container pdf-suite-container">
                 <div class="pdf-header-bar-minimal">
-                    <div class="pdf-control-group">
-                        <button class="pdf-tool-btn" id="catalogue-prev" title="Previous Page"><i class="fa-solid fa-chevron-left"></i></button>
-                        <span class="pdf-page-indicator">
-                            Page <input type="number" id="catalogue-page-num" value="1" min="1"> / <span id="catalogue-page-count">--</span>
-                        </span>
-                        <button class="pdf-tool-btn" id="catalogue-next" title="Next Page"><i class="fa-solid fa-chevron-right"></i></button>
+                    <div class="pdf-title-bar">
+                        <h3 style="font-size:1.2rem; display:flex; align-items:center; gap:0.5rem;"><i
+                                class="fa-solid fa-box" style="color:var(--accent-orange);"></i> Asset Catalogue
+                            Specification</h3>
                     </div>
-                    <span style="font-size:0.78rem; color:var(--text-muted); font-weight:600;"><i class="fa-solid fa-computer-mouse"></i> Scroll to read · Ctrl + Wheel to zoom</span>
+                    <div class="pdf-action-group">
+                        <a href="Asset List.pdf" target="_blank" class="pdf-btn-action glow">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            <span>Open Full PDF Directly</span>
+                        </a>
+                        <a href="Asset List.pdf" download="Asset List.pdf" class="pdf-btn-action secondary">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Download PDF</span>
+                        </a>
+                    </div>
                 </div>
 
-                <div class="pdf-viewport-wrapper" id="catalogue-pdf-body">
-                    <div class="pdf-canvas-container" id="catalogue-canvas-container">
-                        <!-- Pages rendered continuously by JS -->
-                    </div>
-                    <iframe id="catalogue-fallback-iframe" src="Asset List.pdf" style="display:none; width:100%; height:80vh; border:none; border-radius:8px;"></iframe>
+                <div class="pdf-viewport-wrapper" style="margin-top:1rem;">
+                    <iframe id="catalogue-iframe" src="Asset List.pdf"
+                        style="width:100%; height:82vh; border:1px solid var(--border-subtle); border-radius:8px;"></iframe>
                 </div>
             </div>
         </section>
 
-        <!-- ======================== 5. SPACIOUS TABBED ADMIN COMMAND CENTER ======================== -->
+        <!-- ======================== 6. TEAM PORTFOLIOS VIEW ======================== -->
+        <section id="view-portfolios" class="view">
+            <div class="view-container">
+                <div id="portfolio-locked-overlay" class="locked-view-banner"
+                    style="display:none; text-align:center; padding:4rem 2rem; background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); margin-top:2rem;">
+                    <i class="fa-solid fa-lock"
+                        style="font-size:3.5rem; color:var(--accent-orange); margin-bottom:1rem;"></i>
+                    <h2 style="font-size:1.8rem; margin-bottom:0.5rem;">Portfolio Locked</h2>
+                    <p style="color:var(--text-secondary); max-width:500px; margin:0 auto 1.5rem auto;">Team Portfolios
+                        will unlock automatically after Sector Allocation in Phase 2.</p>
+                    <button class="btn-secondary" onclick="window.BidApp.switchView('home')">← Return to Home</button>
+                </div>
+
+                <div id="portfolio-unlocked-content">
+                    <div class="view-header">
+                        <div>
+                            <h2>Team Portfolios</h2>
+                            <p class="view-subtext">Inspect sector assignments, remaining budgets, acquired assets,
+                                purchase prices, and total spend</p>
+                        </div>
+                        <div class="portfolio-controls">
+                            <select id="portfolio-team-selector" class="select-filter"
+                                onchange="window.BidApp.renderPortfoliosView()">
+                                <option value="all">All Teams</option>
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="teams-portfolio-grid" id="portfolios-grid-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================== 7. ADMIN COMMAND CENTER ======================== -->
         <section id="view-admin" class="view">
             <div class="view-container">
                 <div class="view-header">
                     <div>
-                        <h2><i class="fa-solid fa-bolt"></i> Admin Command Center</h2>
-                        <p class="view-subtext">Intuitive event management dashboard</p>
+                        <h2><i class="fa-solid fa-bolt" style="color:var(--accent-orange);"></i> Admin Command Center
+                        </h2>
+                        <p class="view-subtext">Live event phase engine, sector assigner, auction manager, and budget
+                            controller</p>
                     </div>
                     <div class="admin-top-actions">
-                        <button class="btn-danger btn-small" id="btn-admin-undo"><i class="fa-solid fa-rotate-left"></i> Undo Action</button>
-                        <button class="btn-secondary btn-small" id="btn-admin-reset-system"><i class="fa-solid fa-triangle-exclamation"></i> Reset State</button>
+                        <button class="btn-danger btn-small" id="btn-admin-undo"
+                            onclick="window.BidApp.undoLastAction()"><i class="fa-solid fa-rotate-left"></i> Undo
+                            Action</button>
+                        <button class="btn-secondary btn-small" id="btn-admin-reset-system"
+                            onclick="window.BidApp.resetSystem()"><i class="fa-solid fa-triangle-exclamation"></i> Reset
+                            State</button>
                     </div>
                 </div>
 
                 <!-- ADMIN SUB-TABS NAVIGATION -->
                 <div class="admin-subtabs-bar">
-                    <button class="admin-subtab-btn active" data-subtab="auction"><i class="fa-solid fa-gavel"></i> 1. Live Bidding</button>
-                    <button class="admin-subtab-btn" data-subtab="sectors"><i class="fa-solid fa-car-side"></i> 2. Sectors & Budgets</button>
-                    <button class="admin-subtab-btn" data-subtab="teams"><i class="fa-solid fa-users"></i> 3. Team Roster</button>
-                    <button class="admin-subtab-btn" data-subtab="assets"><i class="fa-solid fa-box"></i> 4. Asset Catalog</button>
-                    <button class="admin-subtab-btn" data-subtab="phases"><i class="fa-solid fa-list-check"></i> 5. Phases & Notices</button>
+                    <button class="admin-subtab-btn active" data-subtab="auction"
+                        onclick="window.BidApp.switchAdminSubtab('auction')"><i class="fa-solid fa-gavel"></i> 1. Live
+                        Bidding</button>
+                    <button class="admin-subtab-btn" data-subtab="sectors"
+                        onclick="window.BidApp.switchAdminSubtab('sectors')"><i class="fa-solid fa-car-side"></i> 2.
+                        Sectors & Budgets</button>
+                    <button class="admin-subtab-btn" data-subtab="teams"
+                        onclick="window.BidApp.switchAdminSubtab('teams')"><i class="fa-solid fa-users"></i> 3. Team
+                        Roster</button>
+                    <button class="admin-subtab-btn" data-subtab="assets"
+                        onclick="window.BidApp.switchAdminSubtab('assets')"><i class="fa-solid fa-box"></i> 4. Asset
+                        Catalog</button>
+                    <button class="admin-subtab-btn" data-subtab="phases"
+                        onclick="window.BidApp.switchAdminSubtab('phases')"><i class="fa-solid fa-list-check"></i> 5.
+                        Phases & Notices</button>
                 </div>
 
                 <!-- SUB-TAB 1: LIVE BIDDING LOGGING -->
                 <div id="admin-subtab-panel-auction" class="admin-subtab-panel active">
                     <div class="admin-section-box">
-                        <h3><i class="fa-solid fa-gavel"></i> Record Offline Bid (Assign Asset)</h3>
-                        <p class="section-desc">Select an available asset, winning team, and final bid amount to record sale and deduct budget automatically.</p>
-                        <div class="form-grid-3">
+                        <h3><i class="fa-solid fa-gavel"></i> Record Live Bid / Assign Asset Sale</h3>
+                        <p class="section-desc">Select active asset, winning team, and winning bid amount. Budget will
+                            automatically be deducted and portfolios synced live.</p>
+                        <div id="admin-live-bidder-info-banner"></div>
+                        <div class="form-grid-3" style="margin-top:1rem;">
                             <div class="form-group">
                                 <label>Select Asset to Sell</label>
                                 <select id="admin-assign-asset-select" class="form-control"></select>
@@ -218,10 +266,13 @@
                             </div>
                             <div class="form-group">
                                 <label>Winning Purchase Price (₹ Cr)</label>
-                                <input type="number" id="admin-assign-price-input" class="form-control" placeholder="e.g. 15" min="1" step="1">
+                                <input type="number" id="admin-assign-price-input" class="form-control"
+                                    placeholder="e.g. 15" min="1" step="1">
                             </div>
                         </div>
-                        <button class="btn-primary-glow" id="btn-admin-submit-bid" style="max-width:300px;">Record Sale & Update Budget →</button>
+                        <button class="btn-primary-glow" id="btn-admin-submit-bid"
+                            style="max-width:320px; margin-top:1rem;"
+                            onclick="window.BidApp.submitAdminRecordBid()">Record Sale & Update Budgets →</button>
                     </div>
                 </div>
 
@@ -241,13 +292,17 @@
                                     <label>Select Sector</label>
                                     <select id="admin-sector-name-select" class="form-control">
                                         <option value="Formula 1 & Motorsports">Formula 1 & Motorsports</option>
-                                        <option value="OceanX (Marine & Water Mobility)">OceanX (Marine & Water Mobility)</option>
-                                        <option value="SkyRush (Air Mobility & Aviation Innovation)">SkyRush (Air Mobility & Aviation Innovation)</option>
-                                        <option value="DriveVerse (Future Ground Mobility)">DriveVerse (Future Ground Mobility)</option>
+                                        <option value="OceanX (Marine & Water Mobility)">OceanX (Marine & Water
+                                            Mobility)</option>
+                                        <option value="SkyRush (Air Mobility & Aviation Innovation)">SkyRush (Air
+                                            Mobility & Aviation Innovation)</option>
+                                        <option value="DriveVerse (Future Ground Mobility)">DriveVerse (Future Ground
+                                            Mobility)</option>
                                         <option value="Unassigned">Unassigned</option>
                                     </select>
                                 </div>
-                                <button class="btn-accent-glow btn-full" id="btn-admin-submit-sector">Assign Sector</button>
+                                <button class="btn-accent-glow btn-full" id="btn-admin-submit-sector"
+                                    onclick="window.BidApp.submitAdminAssignSector()">Assign Sector</button>
                             </div>
                         </div>
 
@@ -270,9 +325,11 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Amount (₹ Cr)</label>
-                                    <input type="number" id="admin-budget-amount-input" class="form-control" placeholder="e.g. 5" min="0" step="1">
+                                    <input type="number" id="admin-budget-amount-input" class="form-control"
+                                        placeholder="e.g. 5" min="0" step="1">
                                 </div>
-                                <button class="btn-accent-glow btn-full" id="btn-admin-submit-budget">Apply Budget Adjustment</button>
+                                <button class="btn-accent-glow btn-full" id="btn-admin-submit-budget"
+                                    onclick="window.BidApp.submitAdminAdjustBudget()">Apply Budget Adjustment</button>
                             </div>
                         </div>
                     </div>
@@ -282,18 +339,21 @@
                 <div id="admin-subtab-panel-teams" class="admin-subtab-panel">
                     <div class="admin-section-box" style="margin-bottom:1.5rem;">
                         <h3><i class="fa-solid fa-user-plus"></i> + Create New Team</h3>
-                        <div class="form-grid-4">
+                        <div class="form-grid-4" style="margin-top:0.8rem;">
                             <div class="form-group">
                                 <label>Team Name</label>
-                                <input type="text" id="admin-new-team-name" class="form-control" placeholder="e.g. Team Quantum">
+                                <input type="text" id="admin-new-team-name" class="form-control"
+                                    placeholder="e.g. Team Quantum">
                             </div>
                             <div class="form-group">
                                 <label>Team Members</label>
-                                <input type="text" id="admin-new-team-members" class="form-control" placeholder="e.g. Alice, Bob">
+                                <input type="text" id="admin-new-team-members" class="form-control"
+                                    placeholder="e.g. Alice, Bob">
                             </div>
                             <div class="form-group">
                                 <label>Initial Budget (₹ Cr)</label>
-                                <input type="number" id="admin-new-team-budget" class="form-control" value="100" min="1">
+                                <input type="number" id="admin-new-team-budget" class="form-control" value="100"
+                                    min="1">
                             </div>
                             <div class="form-group">
                                 <label>Assigned Sector</label>
@@ -306,7 +366,8 @@
                                 </select>
                             </div>
                         </div>
-                        <button class="btn-primary-glow" id="btn-admin-add-team" style="max-width:220px;">+ Create Team</button>
+                        <button class="btn-primary-glow" id="btn-admin-add-team" style="max-width:220px;"
+                            onclick="window.BidApp.submitAdminCreateTeam()">+ Create Team</button>
                     </div>
 
                     <div class="admin-section-box">
@@ -321,22 +382,24 @@
                 <div id="admin-subtab-panel-assets" class="admin-subtab-panel">
                     <div class="admin-section-box" style="margin-bottom:1.5rem;">
                         <h3><i class="fa-solid fa-box-archive"></i> + Create New Asset</h3>
-                        <div class="form-grid-4">
+                        <div class="form-grid-4" style="margin-top:0.8rem;">
                             <div class="form-group">
                                 <label>Asset Name</label>
-                                <input type="text" id="admin-new-asset-name" class="form-control" placeholder="e.g. AI Supercomputer Hub">
+                                <input type="text" id="admin-new-asset-name" class="form-control"
+                                    placeholder="e.g. AI Supercomputer Hub">
                             </div>
                             <div class="form-group">
                                 <label>Base Price (₹ Cr)</label>
-                                <input type="number" id="admin-new-asset-price" class="form-control" placeholder="e.g. 15" min="1">
+                                <input type="number" id="admin-new-asset-price" class="form-control"
+                                    placeholder="e.g. 15" min="1">
                             </div>
                             <div class="form-group">
                                 <label>Category</label>
                                 <select id="admin-new-asset-cat" class="form-control">
-                                    <option value="A">Category A</option>
-                                    <option value="B">Category B</option>
-                                    <option value="C">Category C</option>
-                                    <option value="D">Category D</option>
+                                    <option value="A">Category A (Premium)</option>
+                                    <option value="B">Category B (Core)</option>
+                                    <option value="C">Category C (Support)</option>
+                                    <option value="D">Category D (Support)</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -349,13 +412,17 @@
                                 </select>
                             </div>
                         </div>
-                        <button class="btn-primary-glow" id="btn-admin-add-asset" style="max-width:220px;">+ Create Asset</button>
+                        <button class="btn-primary-glow" id="btn-admin-add-asset" style="max-width:220px;"
+                            onclick="window.BidApp.submitAdminCreateAsset()">+ Create Asset</button>
                     </div>
 
                     <div class="admin-section-box">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                            <h3 style="margin:0;"><i class="fa-solid fa-boxes-stacked"></i> Asset Catalog & Ownership Manager</h3>
-                            <select id="admin-asset-status-filter" class="select-filter">
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                            <h3 style="margin:0;"><i class="fa-solid fa-boxes-stacked"></i> Asset Catalog & Ownership
+                                Manager</h3>
+                            <select id="admin-asset-status-filter" class="select-filter"
+                                onchange="window.BidApp.renderAdminControls()">
                                 <option value="all">All Assets</option>
                                 <option value="Sold">Sold Assets</option>
                                 <option value="Available">Available Assets</option>
@@ -385,17 +452,43 @@
 
                 <!-- SUB-TAB 5: PHASES & ANNOUNCEMENTS -->
                 <div id="admin-subtab-panel-phases" class="admin-subtab-panel">
+                    <div class="admin-section-box" style="margin-bottom:1.5rem;">
+                        <h3><i class="fa-solid fa-clock"></i> Synchronized Event Timers Controller</h3>
+                        <p class="section-desc">Control live timers for Phase 7 (10-Min Negotiation) and Phase 9 (20-Min Final PPT Submission).</p>
+                        
+                        <div class="admin-grid-2" style="margin-top:1rem;">
+                            <div style="background:var(--bg-primary); border:1px solid var(--border-subtle); border-radius:8px; padding:1.2rem;">
+                                <h4 style="color:var(--text-primary); margin-bottom:0.4rem;"><i class="fa-solid fa-handshake"></i> Phase 7: Negotiation Window Timer (10m)</h4>
+                                <div id="admin-timer-status-negotiation" style="font-size:1.8rem; font-weight:800; font-family:'JetBrains Mono'; color:var(--accent-orange); margin:0.4rem 0;">10:00</div>
+                                <div style="display:flex; gap:0.5rem; margin-top:0.8rem;">
+                                    <button class="btn-primary-glow btn-small" onclick="window.BidApp.toggleTimer('negotiation')">Start / Pause Timer</button>
+                                    <button class="btn-secondary btn-small" onclick="window.BidApp.resetTimer('negotiation', 600)">Reset (10m)</button>
+                                </div>
+                            </div>
+
+                            <div style="background:var(--bg-primary); border:1px solid var(--border-subtle); border-radius:8px; padding:1.2rem;">
+                                <h4 style="color:var(--text-primary); margin-bottom:0.4rem;"><i class="fa-solid fa-file-powerpoint"></i> Phase 9: Final PPT Submission Timer (20m)</h4>
+                                <div id="admin-timer-status-submission" style="font-size:1.8rem; font-weight:800; font-family:'JetBrains Mono'; color:var(--accent-orange); margin:0.4rem 0;">20:00</div>
+                                <div style="display:flex; gap:0.5rem; margin-top:0.8rem;">
+                                    <button class="btn-primary-glow btn-small" onclick="window.BidApp.toggleTimer('submission')">Start / Pause Timer</button>
+                                    <button class="btn-secondary btn-small" onclick="window.BidApp.resetTimer('submission', 1200)">Reset (20m)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="admin-grid-2" style="margin-bottom:1.5rem;">
                         <div class="admin-card">
                             <div class="admin-card-header">
-                                <h3><i class="fa-solid fa-flag-checkered"></i> Set Current Phase</h3>
+                                <h3><i class="fa-solid fa-flag-checkered"></i> Set Active Event Phase</h3>
                             </div>
                             <div class="admin-card-body">
                                 <div class="form-group">
                                     <label>Active Event Phase</label>
                                     <select id="admin-phase-select" class="form-control"></select>
                                 </div>
-                                <button class="btn-primary-glow btn-full" id="btn-admin-submit-phase">Set Active Phase</button>
+                                <button class="btn-primary-glow btn-full" id="btn-admin-submit-phase"
+                                    onclick="window.BidApp.submitAdminSetPhase()">Set Active Phase</button>
                             </div>
                         </div>
 
@@ -405,15 +498,26 @@
                             </div>
                             <div class="admin-card-body">
                                 <div class="form-group">
-                                    <input type="text" id="admin-notice-input" class="form-control" placeholder="Enter notice text...">
+                                    <input type="text" id="admin-notice-input" class="form-control"
+                                        placeholder="Enter notice text...">
                                 </div>
-                                <div class="preset-announcement-btns" style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:0.8rem;">
-                                    <button class="btn-tag" data-notice="Negotiation Window Begins!">Negotiation Window Begins</button>
-                                    <button class="btn-tag" data-notice="Redistribution Market Starts!">Redistribution Market</button>
-                                    <button class="btn-tag" data-notice="Submit Final PPT now!">Submit Final PPT</button>
-                                    <button class="btn-tag" data-notice="Results in 10 Minutes!">Results in 10 Min</button>
+                                <div class="preset-announcement-btns"
+                                    style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:0.8rem;">
+                                    <button class="btn-tag"
+                                        onclick="window.BidApp.pushPresetNotice('Negotiation Window Begins!')">Negotiation
+                                        Window Begins</button>
+                                    <button class="btn-tag"
+                                        onclick="window.BidApp.pushPresetNotice('Redistribution Market Starts!')">Redistribution
+                                        Market</button>
+                                    <button class="btn-tag"
+                                        onclick="window.BidApp.pushPresetNotice('Submit Final PPT now!')">Submit Final
+                                        PPT</button>
+                                    <button class="btn-tag"
+                                        onclick="window.BidApp.pushPresetNotice('Results in 10 Minutes!')">Results in 10
+                                        Min</button>
                                 </div>
-                                <button class="btn-accent-glow btn-full" id="btn-admin-submit-notice">Push Notice</button>
+                                <button class="btn-accent-glow btn-full" id="btn-admin-submit-notice"
+                                    onclick="window.BidApp.submitAdminPushNotice()">Push Notice</button>
                             </div>
                         </div>
                     </div>
@@ -423,16 +527,21 @@
                         <div class="form-grid-2" style="margin-top:0.8rem;">
                             <div class="form-group">
                                 <label>Phase Name</label>
-                                <input type="text" id="admin-new-phase-name" class="form-control" placeholder="e.g. 12. Award Gala">
+                                <input type="text" id="admin-new-phase-name" class="form-control"
+                                    placeholder="e.g. 12. Award Gala">
                             </div>
                             <div class="form-group">
                                 <label>Phase Description</label>
-                                <input type="text" id="admin-new-phase-desc" class="form-control" placeholder="Brief description...">
+                                <input type="text" id="admin-new-phase-desc" class="form-control"
+                                    placeholder="Brief description...">
                             </div>
                         </div>
-                        <button class="btn-primary-glow" id="btn-admin-add-phase" style="max-width:220px; margin-bottom:1.5rem;">+ Create Phase</button>
+                        <button class="btn-primary-glow" id="btn-admin-add-phase"
+                            style="max-width:220px; margin-bottom:1.5rem;"
+                            onclick="window.BidApp.submitAdminCreatePhase()">+ Create Phase</button>
 
-                        <h3 style="margin-top:1.5rem;"><i class="fa-solid fa-diagram-project"></i> Manage Event Phases Roadmap</h3>
+                        <h3 style="margin-top:1.5rem;"><i class="fa-solid fa-diagram-project"></i> Manage Event Phases
+                            Roadmap</h3>
                         <div id="admin-phases-edit-list" style="margin-top:0.8rem;">
                             <!-- Populated by JS -->
                         </div>
@@ -444,27 +553,133 @@
 
     </main>
 
-    <!-- FOOTER WITH DISCREET HIDDEN ADMIN ACCESS FOR SYSTEM OPERATORS -->
-    <footer class="app-footer">
-        <div class="footer-content">
-            <span>© Bid A Biz Grand Finale · Headstart</span>
-            <span class="footer-hidden-trigger" id="footer-admin-trigger" title="System Access">v2.8</span>
-        </div>
-    </footer>
+
 
     <!-- ======================== MODALS & OVERLAYS ======================== -->
 
-    <!-- Admin Passcode Modal (Triggered via Ctrl+Shift+A or footer version click) -->
-    <div id="admin-passcode-modal" class="dialog-overlay" style="display:none;">
-        <div class="dialog-box" style="max-width:380px;">
-            <h3><i class="fa-solid fa-lock"></i> Admin Authentication</h3>
-            <p style="font-size:0.85rem; color:var(--text-secondary); margin-top:0.4rem;">Enter Admin Passcode to gain event control center access.</p>
-            <div style="margin: 1.2rem 0;">
-                <input type="password" id="admin-passcode-input" placeholder="Passcode" style="width:100%; padding:0.8rem; background:#0f172a; border:1px solid #334155; border-radius:4px; color:white; text-align:center; font-size:1.1rem; letter-spacing:2px;" autocomplete="off">
+    <!-- Participant Select Modal -->
+    <div id="participant-login-modal" class="dialog-overlay" style="display:none;">
+        <div class="dialog-box" style="max-width:420px;">
+            <h3><i class="fa-solid fa-users" style="color:var(--accent-orange);"></i> Participant Team Authentication
+            </h3>
+            <p style="font-size:0.88rem; color:var(--text-secondary); margin-top:0.4rem;">Select your registered team
+                and enter your team password to log in.</p>
+            <div style="margin: 1.2rem 0 0.8rem 0;">
+                <label style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:0.4rem;">Select
+                    Your Team</label>
+                <select id="participant-team-select-input" class="form-control"
+                    style="font-size:1rem; padding:0.7rem;"></select>
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <label style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:0.4rem;">Team
+                    Password</label>
+                <input type="password" id="participant-password-input" class="form-control"
+                    placeholder="Enter Team Password"
+                    style="width:100%; padding:0.8rem; background:var(--bg-input); border:1px solid var(--border-subtle); border-radius:6px; color:var(--text-primary); text-align:center; font-size:1.1rem; letter-spacing:1px;"
+                    autocomplete="off">
             </div>
             <div class="dialog-actions">
-                <button class="btn-secondary" id="admin-passcode-cancel">Cancel</button>
-                <button class="btn-accent-glow" id="admin-passcode-submit">Authenticate →</button>
+                <button class="btn-secondary" id="participant-login-cancel"
+                    onclick="window.BidApp.closeParticipantModal()">Cancel</button>
+                <button class="btn-primary-glow" id="participant-login-submit"
+                    onclick="window.BidApp.submitParticipantLogin()">Login to Dashboard →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Passcode Modal -->
+    <div id="admin-passcode-modal" class="dialog-overlay" style="display:none;">
+        <div class="dialog-box" style="max-width:380px;">
+            <h3><i class="fa-solid fa-lock" style="color:var(--accent-cyan);"></i> Admin Authentication</h3>
+            <p style="font-size:0.88rem; color:var(--text-secondary); margin-top:0.4rem;">Enter Admin Passcode to gain
+                event control center access.</p>
+            <div style="margin: 1.2rem 0;">
+                <input type="password" id="admin-passcode-input" placeholder="Passcode"
+                    style="width:100%; padding:0.8rem; background:var(--bg-input); border:1px solid var(--border-subtle); border-radius:6px; color:var(--text-primary); text-align:center; font-size:1.1rem; letter-spacing:2px;"
+                    autocomplete="off">
+            </div>
+            <div class="dialog-actions">
+                <button class="btn-secondary" id="admin-passcode-cancel"
+                    onclick="window.BidApp.closeAdminModal()">Cancel</button>
+                <button class="btn-accent-glow" id="admin-passcode-submit"
+                    onclick="window.BidApp.submitAdminLogin()">Authenticate →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Industry Disruption Full-Screen Modal (Phase 6) -->
+    <div id="modal-disruption" class="dialog-overlay" style="display:none;">
+        <div class="dialog-box" style="max-width:900px; width:95%; max-height:90vh; overflow-y:auto;">
+            <div class="disruption-modal-header"
+                style="border-bottom:2px solid var(--accent-rose); padding-bottom:1rem; margin-bottom:1.5rem;">
+                <div style="display:flex; align-items:center; gap:0.8rem;">
+                    <span class="role-badge"
+                        style="background:var(--accent-rose); color:white; font-weight:800; font-size:0.85rem; padding:0.4rem 0.8rem;"><i
+                            class="fa-solid fa-triangle-exclamation"></i> MAJOR MARKET SHIFT</span>
+                    <h2 style="font-size:1.8rem; margin:0; color:var(--text-primary);">Phase 6: Industry Disruption</h2>
+                </div>
+                <p style="color:var(--accent-rose); font-weight:700; margin-top:0.6rem; font-size:1rem;">
+                    ⚠️ Important: Carefully read your assigned sector's case study first, then examine your competitors'
+                    case studies to formulate strategic counters!
+                </p>
+            </div>
+
+            <div class="disruption-cases-grid"
+                style="display:grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap:1.2rem;">
+                <!-- Case Study 1: Formula 1 -->
+                <div class="disruption-card"
+                    style="background:var(--bg-primary); border:1px solid var(--border-subtle); border-radius:8px; padding:1.2rem;">
+                    <h3 style="color:var(--accent-orange); font-size:1.15rem; margin-bottom:0.5rem;"><i
+                            class="fa-solid fa-flag-checkered"></i> 1. Formula 1 & Motorsports</h3>
+                    <p style="font-size:0.88rem; color:var(--text-secondary); line-height:1.5;">
+                        <strong>Disruption Event:</strong> FIA enforces zero-emission sustainable synth-fuel directives
+                        and mandatory AI active telemetry integration. Standard internal combustion R&D values dropped
+                        by 25%, while telemetry and lightweight carbon asset values surge 40%.
+                    </p>
+                </div>
+
+                <!-- Case Study 2: OceanX -->
+                <div class="disruption-card"
+                    style="background:var(--bg-primary); border:1px solid var(--border-subtle); border-radius:8px; padding:1.2rem;">
+                    <h3 style="color:#0284c7; font-size:1.15rem; margin-bottom:0.5rem;"><i
+                            class="fa-solid fa-water"></i> 2. OceanX (Marine & Water Mobility)</h3>
+                    <p style="font-size:0.88rem; color:var(--text-secondary); line-height:1.5;">
+                        <strong>Disruption Event:</strong> IMO mandates autonomous electric hydrofoil freight channels
+                        across major port corridors. Coastal warehousing demand skyrockets, while diesel marine
+                        logistics incur heavy carbon penalty levies.
+                    </p>
+                </div>
+
+                <!-- Case Study 3: SkyRush -->
+                <div class="disruption-card"
+                    style="background:var(--bg-primary); border:1px solid var(--border-subtle); border-radius:8px; padding:1.2rem;">
+                    <h3 style="color:#a855f7; font-size:1.15rem; margin-bottom:0.5rem;"><i
+                            class="fa-solid fa-plane"></i> 3. SkyRush (Air Mobility & Aviation)</h3>
+                    <p style="font-size:0.88rem; color:var(--text-secondary); line-height:1.5;">
+                        <strong>Disruption Event:</strong> Civil Aviation Authority clears low-altitude eVTOL commercial
+                        air corridors. Air traffic control licenses and autonomous drone fleet hubs gain massive premium
+                        valuation multipliers.
+                    </p>
+                </div>
+
+                <!-- Case Study 4: DriveVerse -->
+                <div class="disruption-card"
+                    style="background:var(--bg-primary); border:1px solid var(--border-subtle); border-radius:8px; padding:1.2rem;">
+                    <h3 style="color:#10b981; font-size:1.15rem; margin-bottom:0.5rem;"><i class="fa-solid fa-car"></i>
+                        4. DriveVerse (Future Ground Mobility)</h3>
+                    <p style="font-size:0.88rem; color:var(--text-secondary); line-height:1.5;">
+                        <strong>Disruption Event:</strong> National Smart Highway Grid integrates dynamic wireless
+                        charging lanes. Battery swapped fleet rights double in strategic value while legacy gas station
+                        land banks face valuation write-downs.
+                    </p>
+                </div>
+            </div>
+
+            <div class="dialog-actions" style="margin-top:1.5rem; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.8rem; color:var(--text-muted);"><i class="fa-solid fa-circle-info"></i>
+                    Navigation tabs (Portfolio, Rulebook, Catalogue, Timeline) remain accessible.</span>
+                <button class="btn-primary-glow" id="btn-close-disruption" style="max-width:200px;"
+                    onclick="window.BidApp.closeDisruptionModal()">Acknowledge & Continue →</button>
             </div>
         </div>
     </div>
@@ -474,16 +689,21 @@
         <div class="dialog-box" style="max-width:420px;">
             <h3 id="edit-sale-title"><i class="fa-solid fa-pen-to-square"></i> Edit Asset Sale</h3>
             <div style="margin: 1rem 0;">
-                <label style="color:var(--text-muted); font-size:0.85rem; display:block; margin-bottom:0.3rem;">Owner Team</label>
+                <label style="color:var(--text-muted); font-size:0.85rem; display:block; margin-bottom:0.3rem;">Owner
+                    Team</label>
                 <select id="edit-sale-team-select" class="form-control"></select>
             </div>
             <div style="margin-bottom: 1.5rem;">
-                <label style="color:var(--text-muted); font-size:0.85rem; display:block; margin-bottom:0.3rem;">Purchase Price (₹ Cr)</label>
-                <input type="number" id="edit-sale-price-input" class="form-control" min="1" step="1" style="text-align:center; font-size:1.2rem;">
+                <label style="color:var(--text-muted); font-size:0.85rem; display:block; margin-bottom:0.3rem;">Purchase
+                    Price (₹ Cr)</label>
+                <input type="number" id="edit-sale-price-input" class="form-control" min="1" step="1"
+                    style="text-align:center; font-size:1.2rem;">
             </div>
             <div class="dialog-actions">
-                <button class="btn-secondary" id="edit-sale-cancel">Cancel</button>
-                <button class="btn-primary-glow" id="edit-sale-save">Save Changes</button>
+                <button class="btn-secondary" id="edit-sale-cancel"
+                    onclick="document.getElementById('edit-sale-modal').style.display='none'">Cancel</button>
+                <button class="btn-primary-glow" id="edit-sale-save" onclick="window.BidApp.saveEditSaleModal()">Save
+                    Changes</button>
             </div>
         </div>
     </div>
@@ -491,36 +711,46 @@
     <!-- Portfolio Detail Modal -->
     <div id="portfolio-modal" class="dialog-overlay" style="display:none;">
         <div class="dialog-box" style="max-width:650px; width:90%;">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #1e293b; padding-bottom:0.8rem; margin-bottom:1rem;">
+            <div
+                style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-subtle); padding-bottom:0.8rem; margin-bottom:1rem;">
                 <div>
                     <h2 id="modal-team-name" style="color:var(--accent-orange); font-size:1.6rem;">Team Alpha</h2>
                     <span id="modal-team-sector" class="sector-badge">Formula 1 & Motorsports</span>
                 </div>
-                <button class="btn-close-modal" id="btn-close-portfolio-modal">✕</button>
+                <button class="btn-close-modal" id="btn-close-portfolio-modal"
+                    onclick="document.getElementById('portfolio-modal').style.display='none'">✕</button>
             </div>
 
             <div class="modal-body">
-                <div class="modal-stats-row" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; margin-bottom:1.5rem; background:var(--bg-primary); padding:1rem; border-radius:6px; border:1px solid var(--border-subtle);">
+                <div class="modal-stats-row"
+                    style="display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; margin-bottom:1.5rem; background:var(--bg-primary); padding:1rem; border-radius:6px; border:1px solid var(--border-subtle);">
                     <div>
-                        <span class="stat-lbl" style="display:block; font-size:0.75rem; color:var(--text-muted);">REMAINING BUDGET</span>
-                        <strong id="modal-team-budget" style="font-size:1.4rem; color:var(--accent-emerald);">₹100 Cr</strong>
+                        <span class="stat-lbl"
+                            style="display:block; font-size:0.75rem; color:var(--text-muted);">REMAINING BUDGET</span>
+                        <strong id="modal-team-budget" style="font-size:1.4rem; color:var(--accent-emerald);">₹100
+                            Cr</strong>
                     </div>
                     <div>
-                        <span class="stat-lbl" style="display:block; font-size:0.75rem; color:var(--text-muted);">ASSETS PURCHASED</span>
-                        <strong id="modal-team-assets-count" style="font-size:1.4rem; color:var(--text-primary);">0/5</strong>
+                        <span class="stat-lbl" style="display:block; font-size:0.75rem; color:var(--text-muted);">ASSETS
+                            PURCHASED</span>
+                        <strong id="modal-team-assets-count"
+                            style="font-size:1.4rem; color:var(--text-primary);">0/5</strong>
                     </div>
                     <div>
-                        <span class="stat-lbl" style="display:block; font-size:0.75rem; color:var(--text-muted);">TOTAL SPEND</span>
-                        <strong id="modal-team-total-spend" style="font-size:1.4rem; color:var(--accent-rose);">₹0 Cr</strong>
+                        <span class="stat-lbl" style="display:block; font-size:0.75rem; color:var(--text-muted);">TOTAL
+                            SPEND</span>
+                        <strong id="modal-team-total-spend" style="font-size:1.4rem; color:var(--accent-rose);">₹0
+                            Cr</strong>
                     </div>
                 </div>
 
                 <div style="margin-bottom:1rem;">
                     <h4 style="margin-bottom:0.5rem; color:var(--text-muted);">Team Members:</h4>
-                    <p id="modal-team-members" style="font-size:0.95rem; color:var(--text-primary);">Member 1, Member 2</p>
+                    <p id="modal-team-members" style="font-size:0.95rem; color:var(--text-primary);">Member 1, Member 2
+                    </p>
                 </div>
 
-                <h4 style="margin-bottom:0.8rem; color:var(--accent-gold);">Acquired Assets Portfolio</h4>
+                <h4 style="margin-bottom:0.8rem; color:var(--accent-orange);">Acquired Assets Portfolio</h4>
                 <div class="table-responsive">
                     <table class="corporate-table">
                         <thead>
@@ -543,10 +773,8 @@
     <!-- Toast Notifications -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- PDF.js library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="effects.js"></script>
-    <script src="app.js?v=12"></script>
+    <script src="app.js?v=28"></script>
 </body>
 
 </html>

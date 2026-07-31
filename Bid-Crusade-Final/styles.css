@@ -108,7 +108,11 @@ input[type="submit"],
 .btn-tag,
 .btn-small,
 .announcement-close,
-.btn-close-modal {
+.btn-close-modal,
+.envelope-card,
+.phase-dropdown-item,
+.phase-badge-trigger,
+.admin-subtab-btn {
     cursor: pointer !important;
 }
 
@@ -477,6 +481,20 @@ input[type="password"] {
     color: var(--accent-rose);
 }
 
+.user-session-badge,
+#logged-in-user-name,
+#btn-enable-notifications {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+#btn-enable-notifications:hover {
+    color: var(--accent-orange) !important;
+    background: transparent !important;
+    border: none !important;
+}
+
 .btn-role-switch {
     background: var(--bg-secondary);
     border: 1px solid var(--border-subtle);
@@ -758,6 +776,53 @@ main {
     margin-bottom: 1rem;
 }
 
+.pdf-action-group {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.pdf-btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border-radius: 6px;
+    text-decoration: none !important;
+    white-space: nowrap;
+    height: 38px;
+    box-sizing: border-box;
+    transition: var(--transition);
+    cursor: pointer !important;
+}
+
+.pdf-btn-action.glow {
+    background: var(--accent-orange);
+    color: #ffffff !important;
+    border: 1px solid var(--accent-orange);
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);
+}
+
+.pdf-btn-action.glow:hover {
+    background: #ff7d1a;
+    box-shadow: 0 6px 16px rgba(255, 107, 0, 0.4);
+}
+
+.pdf-btn-action.secondary {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary) !important;
+}
+
+.pdf-btn-action.secondary:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--accent-orange);
+    color: var(--accent-orange) !important;
+}
+
 .pdf-viewport-wrapper {
     background: var(--bg-primary);
     border: 1px solid var(--border-subtle);
@@ -956,11 +1021,17 @@ select option:disabled {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.65);
-    display: flex;
+    background: rgba(0, 0, 0, 0.75);
+    display: none;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+}
+
+.dialog-overlay.active,
+.dialog-overlay.show {
+    display: flex !important;
 }
 
 .dialog-box {
@@ -971,6 +1042,31 @@ select option:disabled {
     width: 90%;
     box-shadow: var(--shadow-lg);
     color: var(--text-primary);
+}
+
+select.form-control,
+.dialog-box select,
+#participant-team-select-input {
+    width: 100% !important;
+    max-width: 100% !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 0.95rem !important;
+    border-radius: 6px !important;
+    background: var(--bg-input) !important;
+    border: 1px solid var(--border-subtle) !important;
+    color: var(--text-primary) !important;
+    box-sizing: border-box !important;
+}
+
+select.form-control option,
+.dialog-box select option {
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    padding: 0.6rem !important;
+    font-size: 0.95rem !important;
 }
 
 .dialog-actions {
@@ -996,17 +1092,22 @@ select option:disabled {
     position: fixed;
     bottom: 1.5rem;
     right: 1.5rem;
-    z-index: 2000;
+    z-index: 999999 !important;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .toast-msg {
-    background: var(--bg-card) !important;
+    background: var(--bg-dialog) !important;
     border: 1px solid var(--accent-orange) !important;
     color: var(--text-primary) !important;
-    padding: 0.75rem 1.25rem;
-    border-radius: 6px;
-    box-shadow: var(--shadow-lg);
-    font-size: 0.9rem;
+    padding: 0.85rem 1.4rem;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    font-size: 0.92rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
 }
 
 /* ── ADMIN SUB-TABS NAVIGATION & PANELS ── */
@@ -1127,4 +1228,208 @@ select option:disabled {
 
 .footer-hidden-trigger:hover {
     color: var(--accent-orange);
+}
+
+/* =========================================
+   AUCTION ROUND THEMES (GOLD, SILVER, BRONZE)
+   ========================================= */
+.auction-theme-gold {
+    border: 2px solid #eab308 !important;
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(234, 179, 8, 0.08) 100%) !important;
+    box-shadow: 0 10px 30px rgba(234, 179, 8, 0.15) !important;
+}
+
+.auction-theme-gold .round-theme-badge {
+    background: #eab308 !important;
+    color: #000000 !important;
+    font-weight: 800 !important;
+}
+
+.auction-theme-silver {
+    border: 2px solid #94a3b8 !important;
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(148, 163, 184, 0.08) 100%) !important;
+    box-shadow: 0 10px 30px rgba(148, 163, 184, 0.15) !important;
+}
+
+.auction-theme-silver .round-theme-badge {
+    background: #94a3b8 !important;
+    color: #000000 !important;
+    font-weight: 800 !important;
+}
+
+.auction-theme-bronze {
+    border: 2px solid #d97706 !important;
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(217, 119, 6, 0.08) 100%) !important;
+    box-shadow: 0 10px 30px rgba(217, 119, 6, 0.15) !important;
+}
+
+.auction-theme-bronze .round-theme-badge {
+    background: #d97706 !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+}
+
+/* =========================================
+   PHASE 2 SECTOR ALLOCATION ENVELOPES
+   ========================================= */
+.envelopes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.2rem;
+    margin-top: 1.5rem;
+}
+
+.envelope-card {
+    background: var(--bg-card);
+    border: 2px dashed var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 1.5rem 1rem;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.envelope-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-orange);
+    box-shadow: var(--shadow-lg);
+}
+
+.envelope-card.sealed .envelope-icon {
+    font-size: 2.8rem;
+    color: var(--accent-orange);
+    margin-bottom: 0.8rem;
+}
+
+.envelope-card.opened {
+    border-style: solid;
+    border-color: var(--accent-orange);
+    background: var(--bg-card);
+}
+
+.envelope-card.opened .envelope-icon {
+    font-size: 2.8rem;
+    color: var(--accent-orange);
+    margin-bottom: 0.8rem;
+}
+
+/* =========================================
+   EVENT TIMELINE ROADMAP CARDS
+   ========================================= */
+.timeline-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 1.2rem;
+    position: relative;
+    transition: var(--transition);
+}
+
+.timeline-card.completed {
+    border-color: var(--accent-emerald);
+    background: rgba(16, 185, 129, 0.04);
+}
+
+.timeline-card.current {
+    border: 2px solid var(--accent-orange);
+    box-shadow: 0 0 20px rgba(255, 107, 0, 0.25);
+    background: rgba(255, 107, 0, 0.05);
+}
+
+.timeline-card.locked {
+    opacity: 0.6;
+    border-color: var(--border-subtle);
+    background: var(--bg-secondary);
+}
+
+.timeline-badge-status {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+}
+
+.timeline-card.completed .timeline-badge-status {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--accent-emerald);
+}
+
+.timeline-card.current .timeline-badge-status {
+    background: var(--accent-orange);
+    color: white;
+}
+
+.timeline-card.locked .timeline-badge-status {
+    background: var(--bg-primary);
+    color: var(--text-muted);
+}
+
+/* =========================================
+   COUNTDOWN TIMER DISPLAY
+   ========================================= */
+.timer-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    text-align: center;
+    max-width: 550px;
+    margin: 2rem auto;
+    box-shadow: var(--shadow-lg);
+}
+
+.timer-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 3.8rem;
+    font-weight: 800;
+    color: var(--accent-orange);
+    letter-spacing: 2px;
+    margin: 1rem 0;
+    line-height: 1;
+}
+
+/* SECTOR COLOR BADGES */
+.sector-badge,
+.sector-f1,
+.sector-oceanx,
+.sector-skyrush,
+.sector-driveverse,
+.sector-unassigned {
+    background: transparent !important;
+    color: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    font-weight: 700 !important;
+}
+
+/* ── LIVE PARTICIPANT BIDDING STYLES ── */
+.badge-highest-bidder {
+    background: rgba(255, 107, 0, 0.15) !important;
+    border: 1px solid var(--accent-orange) !important;
+    color: var(--accent-orange) !important;
+    font-size: 0.72rem !important;
+    font-weight: 800 !important;
+    padding: 0.25rem 0.6rem !important;
+    border-radius: 4px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.3rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    animation: pulse 2s infinite !important;
+}
+
+.bid-history-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.bid-history-list::-webkit-scrollbar-thumb {
+    background: var(--border-subtle);
+    border-radius: 4px;
 }
